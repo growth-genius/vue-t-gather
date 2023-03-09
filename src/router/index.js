@@ -1,26 +1,62 @@
-import { createRouter, createWebHistory } from "vue-router";
-import HomeView from "../views/HomeView.vue";
+import { authStore } from '@/store/auth';
+import { createRouter, createWebHistory } from 'vue-router';
 
 const routes = [
-  {
-    path: "/",
-    name: "home",
-    component: HomeView,
-  },
-  {
-    path: "/about",
-    name: "about",
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () =>
-      import(/* webpackChunkName: "about" */ "../views/AboutView.vue"),
-  },
+    {
+        path: '/',
+        component: () => import('@/layout/default/IndexPage.vue'),
+        children: [
+            {
+                path: '/',
+                redirect: '/dashboard',
+            },
+            {
+                path: '/dashboard',
+                name: '대시보드',
+                meta: { auth: true },
+                component: () => import('@/views/DashBoard.vue'),
+            },
+            {
+                path: 'travel',
+                meta: { auth: true },
+
+                component: () => import('@/views/travel/DefaultTravel.vue'),
+                children: [
+                    {
+                        path: 'register-group',
+                        meta: { auth: true },
+
+                        component: () => import('@/views/travel/RegisterTravelGroup.vue'),
+                    },
+                ],
+            },
+        ],
+    },
+    {
+        path: '/auth',
+        component: () => import('@/layout/auth/IndexPage.vue'),
+        children: [
+            {
+                path: 'sign-in',
+                name: '로그인',
+                meta: { auth: true },
+                component: () => import('@/views/auth/SignIn.vue'),
+            },
+        ],
+    },
 ];
 
 const router = createRouter({
-  history: createWebHistory(process.env.BASE_URL),
-  routes,
+    history: createWebHistory(process.env.BASE_URL),
+    routes,
+});
+
+router.beforeEach((to, from, next) => {
+    const store = authStore();
+    if (!to.meta.auth && !store.isLogin) {
+        next('/auth/sign-in');
+    }
+    next();
 });
 
 export default router;
