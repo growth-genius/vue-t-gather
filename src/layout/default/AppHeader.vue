@@ -102,13 +102,16 @@ const toggle = event => {
     padding-top: 0.5rem !important;
     padding-bottom: 0.5rem !important;
 }
+
 .p-menuitem-link {
     padding: 0.5rem !important;
 }
+
 .p-menu-list {
     padding-top: 0.5rem !important;
     padding-bottom: 0.5rem !important;
 }
+
 .p-overlaypanel {
     --overlayArrowLeft: unset !important;
     top: 45px !important;

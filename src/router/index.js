@@ -42,6 +42,12 @@ const routes = [
                 meta: { auth: true },
                 component: () => import('@/views/auth/SignIn.vue'),
             },
+            {
+                path: 'sign-up',
+                name: '회원가입',
+                meta: { auth: true },
+                component: () => import('@/views/auth/SignUp.vue'),
+            },
         ],
     },
 ];
