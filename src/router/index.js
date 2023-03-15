@@ -1,4 +1,4 @@
-import { authStore } from '@/store/auth';
+import { useAuthStore } from '@/store/auth';
 import { createRouter, createWebHistory } from 'vue-router';
 
 const routes = [
@@ -42,6 +42,12 @@ const routes = [
                 meta: { auth: true },
                 component: () => import('@/views/auth/SignIn.vue'),
             },
+            {
+                path: 'sign-up',
+                name: '회원가입',
+                meta: { auth: true },
+                component: () => import('@/views/auth/SignUp.vue'),
+            },
         ],
     },
 ];
@@ -52,7 +58,7 @@ const router = createRouter({
 });
 
 router.beforeEach((to, from, next) => {
-    const store = authStore();
+    const store = useAuthStore();
     if (!to.meta.auth && !store.isLogin) {
         next('/auth/sign-in');
     }

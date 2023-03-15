@@ -1,136 +1,142 @@
 <template>
-    <div class="h-screen flex justify-content-center align-items-center" style="background: #f0f0f2">
-        <div class="flex">
-            <div class="surface-section w-full md:w-6 p-6 md:p-8">
-                <div class="mb-5">
-                    <Image
-                        :src="require('@/assets/logo.png')"
-                        alt="Image Text"
-                        imageStyle="width:200px; height:200px;margin-bottom: 15px; margin-left:95px"
-                    ></Image>
-                    <div class="text-900 text-3xl font-medium mb-3">ToGather ! TripGather</div>
-                    <span class="text-600 font-medium mr-2">계정이 없으신가요?</span>
-                    <a class="font-medium no-underline text-blue-500 cursor-pointer">계정 만들기</a>
+    <div
+        :style="{ backgroundImage: `url(${require('@/assets/signInBackground.jpeg')}` }"
+        class="px-4 py-8 md:px-6 lg:px-8 background"
+    >
+        <div class="flex w-full h-full align-items-center">
+            <div class="flex flex-wrap w-full">
+                <div
+                    class="flex w-full lg:w-6 p-4 lg:p-7 justify-content-center align-items-center"
+                    style="background-color: rgba(255, 255, 255, 0.7)"
+                >
+                    <img :src="require('@/assets/tgather_signin_logo.png')" alt="signIn" class="logo_image" />
                 </div>
-                <div class="flex justify-content-center">
-                    <div class="card" style="width: 100%">
-                        <form @submit.prevent="handleSubmit(!v$.$invalid)" class="p-fluid">
-                            <div class="field">
-                                <div class="p-float-label p-input-icon-right">
-                                    <i class="pi pi-envelope" />
-                                    <input-text
-                                        id="email"
-                                        v-model="v$.email.$model"
-                                        :class="{ 'p-invalid': v$.email.$invalid && submitted }"
-                                        aria-describedby="email-error"
-                                    />
-                                    <label for="email" :class="{ 'p-error': v$.email.$invalid && submitted }"
-                                        >이메일</label
-                                    >
-                                </div>
-                                <span v-if="v$.email.$error && submitted">
-                                    <span id="email-error" v-for="(error, index) of v$.email.$errors" :key="index">
-                                        <small class="p-error">{{ error.$message }}</small>
-                                    </span>
+                <div class="w-full lg:w-6 p-4 lg:p-7 surface-card">
+                    <div class="text-900 text-2xl font-medium mb-6">Login</div>
+                    <form @submit.prevent="login(!v$.$invalid)">
+                        <div class="field">
+                            <div class="p-float-label p-input-icon-right w-full">
+                                <i class="pi pi-envelope" />
+                                <input-text
+                                    id="email"
+                                    v-model="v$.email.$model"
+                                    class="w-full"
+                                    :class="{ 'p-invalid': v$.email.$invalid && submitted }"
+                                    aria-describedby="email-error"
+                                />
+                                <label for="email" :class="{ 'p-error': v$.email.$invalid && submitted }">이메일</label>
+                            </div>
+                            <span v-if="v$.email.$error && submitted">
+                                <span id="email-error" v-for="(error, index) of v$.email.$errors" :key="index">
+                                    <small class="p-error">{{ error.$message }}</small>
                                 </span>
-                                <small
-                                    v-else-if="(v$.email.$invalid && submitted) || v$.email.$pending.$response"
-                                    class="p-error"
-                                    >{{ v$.email.required.$message.replace('Value', 'Email') }}</small
+                            </span>
+                            <small
+                                v-else-if="(v$.email.$invalid && submitted) || v$.email.$pending.$response"
+                                class="p-error"
+                                >{{ v$.email.required.$message.replace('Value', 'Email') }}</small
+                            >
+                        </div>
+
+                        <div class="field">
+                            <div class="p-float-label p-input-icon-right w-full pass-div">
+                                <password
+                                    id="password"
+                                    v-model="v$.password.$model"
+                                    :class="{ 'p-invalid': v$.password.$invalid && submitted }"
+                                    inputClass="w-full"
+                                    toggleMask
+                                    :feedback="false"
                                 >
+                                </password>
+                                <label for="password" :class="{ 'p-error': v$.password.$invalid && submitted }">
+                                    비밀번호
+                                </label>
                             </div>
-                            <div class="field">
-                                <div class="p-float-label">
-                                    <password
-                                        id="password"
-                                        v-model="v$.password.$model"
-                                        :class="{ 'p-invalid': v$.password.$invalid && submitted }"
-                                        toggleMask
-                                        :feedback="false"
-                                    >
-                                    </password>
-                                    <label for="password" :class="{ 'p-error': v$.password.$invalid && submitted }">
-                                        비밀번호
-                                    </label>
-                                </div>
-                                <small
-                                    v-if="(v$.password.$invalid && submitted) || v$.password.$pending.$response"
-                                    class="p-error"
-                                    >{{ v$.password.required.$message.replace('Value', 'password') }}</small
-                                >
-                            </div>
-                            <Button type="submit" label="로그인" class="mt-2" />
-                        </form>
+                            <small
+                                v-if="(v$.password.$invalid && submitted) || v$.password.$pending.$response"
+                                class="p-error"
+                                >{{ v$.password.required.$message.replace('Value', 'password') }}</small
+                            >
+                        </div>
+                        <Button label="Login" icon="pi pi-user" class="w-full bg-green-500" type="submit"></Button>
+                    </form>
+                    <Divider align="center" class="my-6">
+                        <span class="text-600 font-normal text-sm">OR</span>
+                    </Divider>
+                    <Button
+                        label="Sign In with GitHub"
+                        icon="pi pi-github"
+                        class="w-full p-button-secondary bg-black-alpha-90 mb-2"
+                    ></Button>
+                    <Button
+                        label="Sign In with Google"
+                        icon="pi pi-google"
+                        class="w-full p-button-secondary mb-2 bg-blue-500"
+                    ></Button>
+                    <div class="mt-6 text-center text-600">
+                        Don't have an account?
+                        <a tabindex="0" class="font-medium text-blue-500 cursor-pointer" @click="goSignUpPage"
+                            >Sign up</a
+                        >
                     </div>
                 </div>
-            </div>
-            <div class="hidden md:block w-6 bg-no-repeat bg-cover">
-                <Image :src="require('@/assets/signin.jpg')" alt="signIn"></Image>
             </div>
         </div>
     </div>
 </template>
 
 <script setup>
-import { reactive, ref } from 'vue';
-import { email, required } from '@vuelidate/validators';
 import { useVuelidate } from '@vuelidate/core';
-import { authStore } from '@/store/auth';
-import { useCookies } from 'vue3-cookies';
+import { email, required } from '@vuelidate/validators';
+import { ref } from 'vue';
+import { useAuthStore } from '@/store/auth';
 import { useRouter } from 'vue-router';
+import { useToast } from 'primevue/usetoast';
 
-// const progress = progressStore();
-const state = reactive({
-    name: '',
-    email: '',
-    password: '',
-    accept: null,
-});
 const submitted = ref(false);
-
 const rules = {
     email: { required, email },
     password: { required },
 };
-
+const state = ref({
+    email: '',
+    password: '',
+    confirmPassword: '',
+});
 const v$ = useVuelidate(rules, state);
+const goSignUpPage = () => {
+    router.push('/auth/sign-up');
+};
 
-const auth = authStore();
+const authStore = useAuthStore();
+
 const router = useRouter();
-const { cookies } = useCookies();
-const handleSubmit = async isFormValid => {
+const toast = useToast();
+const login = async isValid => {
     submitted.value = true;
-    if (!isFormValid) {
+    if (!isValid) {
         return;
     }
-    console.log('뭐가 문제야 헤이 썸띵');
-    let res = await auth.LOGIN(state);
+    const res = await authStore.LOGIN(state.value);
     if (res.success) {
         await router.push('/');
-        cookies.set(process.env.VUE_APP_AUTH_REFRESH_TOKEN, res.refreshToken);
-        cookies.set(process.env.VUE_APP_AUTH_TOKEN, res.accessToken);
+    } else {
+        console.log(res.message);
+        await toast.add({ severity: 'warn', summary: '로그인 실패', detail: res.message, life: 3000 });
     }
 };
 </script>
+<style scoped>
+.background {
+    height: 100vh;
+    background-size: cover;
+}
 
-<style lang="scss" scoped>
-.form-demo {
-    .card {
-        min-width: 450px;
-
-        form {
-            margin-top: 2rem;
-        }
-
-        .p-field {
-            margin-bottom: 1.5rem;
-        }
-    }
-
-    @media screen and (max-width: 960px) {
-        .card {
-            width: 80%;
-        }
-    }
+.logo_image {
+    height: 50%;
+}
+.pass-div .p-password {
+    width: 100%;
 }
 </style>

@@ -3,7 +3,7 @@ import { getCookie } from '@/utils/cookies';
 import getters from './getters';
 import { signIn } from '@/api/auth';
 
-export const authStore = defineStore('authStore', {
+export const useAuthStore = defineStore('authStore', {
     state: () => ({
         email: getCookie(process.env.VUE_APP_EMAIL) || '',
         accessToken: getCookie(process.env.VUE_APP_AUTH_TOKEN) || '',
@@ -17,9 +17,11 @@ export const authStore = defineStore('authStore', {
     actions: {
         async LOGIN(params) {
             const res = await signIn(params);
-            this.account = res.response;
-            this.accessToken = res.response.accessToken;
-            console.log(params);
+            console.log(res);
+            if (res.success) {
+                this.accessToken = res.response.accessToken;
+                this.account = res.response.account;
+            }
             return res;
         },
     },

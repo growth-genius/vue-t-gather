@@ -23,7 +23,7 @@
         <ul
             class="list-none p-0 m-0 hidden lg:flex lg:align-items-center select-none lg:flex-row surface-section border-1 lg:border-none surface-border right-0 top-100 z-1 shadow-2 lg:shadow-none absolute lg:static"
         >
-            <li>
+            <li v-show="isLogin">
                 <a
                     v-ripple
                     class="flex lg:px-3 lg:py-2 align-items-center text-600 hover:text-900 hover:surface-100 font-medium border-round cursor-pointer transition-duration-150 transition-colors p-ripple"
@@ -75,6 +75,9 @@
 <script setup>
 import { ref } from 'vue';
 import router from '@/router';
+import { useCommonStore } from '@/store/common';
+
+const { isLogin } = useCommonStore();
 
 const goCreateGroupPage = () => {
     router.push('/travel/register-group');
@@ -102,13 +105,16 @@ const toggle = event => {
     padding-top: 0.5rem !important;
     padding-bottom: 0.5rem !important;
 }
+
 .p-menuitem-link {
     padding: 0.5rem !important;
 }
+
 .p-menu-list {
     padding-top: 0.5rem !important;
     padding-bottom: 0.5rem !important;
 }
+
 .p-overlaypanel {
     --overlayArrowLeft: unset !important;
     top: 45px !important;
