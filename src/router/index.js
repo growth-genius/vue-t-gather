@@ -30,6 +30,18 @@ const routes = [
                     },
                 ],
             },
+            {
+                path: '/user',
+                component: () => import('@/layout/auth/IndexPage.vue'),
+                children: [
+                    {
+                        path: 'mypage',
+                        name: '마이페이지',
+                        meta: { auth: true },
+                        component: () => import('@/views/user/MyPage.vue'),
+                    },
+                ],
+            },
         ],
     },
     {
