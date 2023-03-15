@@ -13,22 +13,54 @@
                 </div>
                 <div class="w-full lg:w-6 p-4 lg:p-7 surface-card">
                     <div class="text-900 text-2xl font-medium mb-6">Login</div>
-                    <label for="email3" class="block text-900 font-medium mb-2">Email</label>
-                    <InputText id="email3" type="text" placeholder="Email address" class="w-full mb-4" />
-
-                    <label for="password3" class="block text-900 font-medium mb-2">Password</label>
-                    <InputText id="password3" type="password" placeholder="Password" class="w-full mb-4" />
-
-                    <div class="flex align-items-center justify-content-between mb-6">
-                        <div class="flex align-items-center">
-                            <Checkbox id="rememberme3" :binary="true" v-model="checked3" class="mr-2"></Checkbox>
-                            <label for="rememberme3">Remember me</label>
+                    <form @submit.prevent="login(!v$.$invalid)">
+                        <div class="field">
+                            <div class="p-float-label p-input-icon-right w-full">
+                                <i class="pi pi-envelope" />
+                                <input-text
+                                    id="email"
+                                    v-model="v$.email.$model"
+                                    class="w-full"
+                                    :class="{ 'p-invalid': v$.email.$invalid && submitted }"
+                                    aria-describedby="email-error"
+                                />
+                                <label for="email" :class="{ 'p-error': v$.email.$invalid && submitted }">이메일</label>
+                            </div>
+                            <span v-if="v$.email.$error && submitted">
+                                <span id="email-error" v-for="(error, index) of v$.email.$errors" :key="index">
+                                    <small class="p-error">{{ error.$message }}</small>
+                                </span>
+                            </span>
+                            <small
+                                v-else-if="(v$.email.$invalid && submitted) || v$.email.$pending.$response"
+                                class="p-error"
+                                >{{ v$.email.required.$message.replace('Value', 'Email') }}</small
+                            >
                         </div>
-                        <a class="font-medium no-underline ml-2 text-blue-500 text-right cursor-pointer"
-                            >Forgot password?</a
-                        >
-                    </div>
-                    <Button label="Login" icon="pi pi-user" class="w-full bg-green-500"></Button>
+
+                        <div class="field">
+                            <div class="p-float-label p-input-icon-right w-full pass-div">
+                                <password
+                                    id="password"
+                                    v-model="v$.password.$model"
+                                    :class="{ 'p-invalid': v$.password.$invalid && submitted }"
+                                    inputClass="w-full"
+                                    toggleMask
+                                    :feedback="false"
+                                >
+                                </password>
+                                <label for="password" :class="{ 'p-error': v$.password.$invalid && submitted }">
+                                    비밀번호
+                                </label>
+                            </div>
+                            <small
+                                v-if="(v$.password.$invalid && submitted) || v$.password.$pending.$response"
+                                class="p-error"
+                                >{{ v$.password.required.$message.replace('Value', 'password') }}</small
+                            >
+                        </div>
+                        <Button label="Login" icon="pi pi-user" class="w-full bg-green-500" type="submit"></Button>
+                    </form>
                     <Divider align="center" class="my-6">
                         <span class="text-600 font-normal text-sm">OR</span>
                     </Divider>
@@ -55,10 +87,44 @@
 </template>
 
 <script setup>
-import router from '@/router';
+import { useVuelidate } from '@vuelidate/core';
+import { email, required } from '@vuelidate/validators';
+import { ref } from 'vue';
+import { useAuthStore } from '@/store/auth';
+import { useRouter } from 'vue-router';
+import { useToast } from 'primevue/usetoast';
 
+const submitted = ref(false);
+const rules = {
+    email: { required, email },
+    password: { required },
+};
+const state = ref({
+    email: '',
+    password: '',
+    confirmPassword: '',
+});
+const v$ = useVuelidate(rules, state);
 const goSignUpPage = () => {
     router.push('/auth/sign-up');
+};
+
+const authStore = useAuthStore();
+
+const router = useRouter();
+const toast = useToast();
+const login = async isValid => {
+    submitted.value = true;
+    if (!isValid) {
+        return;
+    }
+    const res = await authStore.LOGIN(state.value);
+    if (res.success) {
+        await router.push('/');
+    } else {
+        console.log(res.message);
+        await toast.add({ severity: 'warn', summary: '로그인 실패', detail: res.message, life: 3000 });
+    }
 };
 </script>
 <style scoped>
@@ -69,5 +135,8 @@ const goSignUpPage = () => {
 
 .logo_image {
     height: 50%;
+}
+.pass-div .p-password {
+    width: 100%;
 }
 </style>

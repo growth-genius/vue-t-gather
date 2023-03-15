@@ -50,12 +50,6 @@ function errFunction(error) {
         res.success = false;
         res.message = '네트워크 연결을 확인해 주세요.';
     }
-    if (res.message && res.status !== 401) {
-        // store.commit('setSanckbarMessage', res.message);
-        // store.commit('setSnackbarTimeout', 5000);
-        // store.commit('setSnackbarColor', 'orange lighten-1');
-        // store.commit('endSnackbar');
-    }
     return res;
 }
 

@@ -1,4 +1,4 @@
-import { createApp } from 'vue';
+import { createApp, reactive } from 'vue';
 import App from './App.vue';
 import router from './router';
 import VueCookies from 'vue3-cookies';
@@ -12,6 +12,7 @@ import 'material-icons/iconfont/material-icons.css';
 import { createPinia } from 'pinia';
 
 const app = createApp(App);
+app.config.globalProperties.$appState = reactive({ theme: 'lara-light-indigo', dark: false });
 app.use(PrimeVue, { ripple: true });
 setPrimeVue(app);
 app.use(router).use(VueCookies).use(createPinia()).mount('#app');
