@@ -17,10 +17,8 @@ export const useAuthStore = defineStore('authStore', {
     actions: {
         async LOGIN(params) {
             const res = await signIn(params);
-            console.log(res);
             if (res.success) {
                 this.accessToken = res.response.accessToken;
-                this.account = res.response.account;
             }
             return res;
         },

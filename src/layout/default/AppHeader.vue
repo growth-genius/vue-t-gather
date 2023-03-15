@@ -3,23 +3,16 @@
         class="flex top-0 justify-content-between align-items-center px-5 surface-0 border-bottom-1 surface-border relative lg:static layout-topbar"
         style="height: 60px; width: 100%"
     >
-        <div class="align-items-center lg:mr-auto mt-1 flex-shrink-0" style="height: 80px">
-            <image :src="require('@/assets/header.png')" alt="Image Text" imageStyle="height:80px;"></image>
+        <div class="align-items-center lg:mr-auto mt-1 flex-shrink-0">
+            <img
+                :src="require('@/assets/header.png')"
+                alt="Image Text"
+                style="height: 65px; cursor: pointer"
+                @click="goDashBoard"
+                v-tooltip.top="'메인화면으로 돌아가기'"
+            />
         </div>
-        <a
-            v-ripple
-            class="cursor-pointer block lg:hidden text-700 p-ripple"
-            v-styleclass="{
-                selector: '@next',
-                enterClass: 'hidden',
-                enterActiveClass: 'fadein',
-                leaveToClass: 'hidden',
-                leaveActiveClass: 'fadeout',
-                hideOnOutsideClick: true,
-            }"
-        >
-            <i class="pi pi-ellipsis-v text-2xl"></i>
-        </a>
+
         <ul
             class="list-none p-0 m-0 hidden lg:flex lg:align-items-center select-none lg:flex-row surface-section border-1 lg:border-none surface-border right-0 top-100 z-1 shadow-2 lg:shadow-none absolute lg:static"
         >
@@ -28,6 +21,7 @@
                     v-ripple
                     class="flex lg:px-3 lg:py-2 align-items-center text-600 hover:text-900 hover:surface-100 font-medium border-round cursor-pointer transition-duration-150 transition-colors p-ripple"
                     @click="goCreateGroupPage"
+                    v-tooltip.top="'여행 그룹 만들기'"
                 >
                     <i class="pi pi-plus-circle text-base lg:text-2xl mr-2 lg:mr-0" />
                 </a>
@@ -83,7 +77,9 @@ const goCreateGroupPage = () => {
     router.push('/travel/register-group');
 };
 const menu = ref();
-
+const goDashBoard = () => {
+    router.push('/');
+};
 const items = ref([
     {
         icon: 'pi pi-info',

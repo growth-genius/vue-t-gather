@@ -119,6 +119,7 @@ const login = async isValid => {
         return;
     }
     const res = await authStore.LOGIN(state.value);
+
     if (res.success) {
         await router.push('/');
     } else {
