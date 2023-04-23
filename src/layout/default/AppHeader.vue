@@ -26,7 +26,7 @@
                     <i class="pi pi-plus-circle text-base lg:text-2xl mr-2 lg:mr-0" />
                 </a>
             </li>
-            <li>
+            <li v-show="isLogin">
                 <a
                     v-ripple
                     class="flex p-3 lg:px-3 lg:py-2 align-items-center text-600 hover:text-900 hover:surface-100 font-medium border-round cursor-pointer transition-duration-150 transition-colors p-ripple"
@@ -36,6 +36,7 @@
                 </a>
             </li>
             <li
+                v-show="isLogin"
                 class="border-top-1 surface-border lg:border-top-none"
                 aria-haspopup="true"
                 aria-controls="profile"
@@ -62,6 +63,9 @@
                     <Toast />
                 </div>
             </li>
+            <li v-show="!isLogin">
+                <Button label="로그인" icon="pi pi-users" outlined @click="goSignIn"></Button>
+            </li>
         </ul>
     </div>
 </template>
@@ -69,10 +73,12 @@
 <script setup>
 import { ref } from 'vue';
 import router from '@/router';
-import { useCommonStore } from '@/store/common';
+import { useAuthStore } from '@/store/auth';
+import { storeToRefs } from 'pinia';
 
-const { isLogin } = useCommonStore();
+const { isLogin } = storeToRefs(useAuthStore());
 
+const { LOGOUT } = useAuthStore();
 const goCreateGroupPage = () => {
     router.push('/travel/register-group');
 };
@@ -88,11 +94,17 @@ const items = ref([
     {
         label: '로그아웃',
         icon: 'pi pi-sign-out',
+        command: async () => {
+            await LOGOUT();
+        },
     },
 ]);
 
 const toggle = event => {
     menu.value.toggle(event);
+};
+const goSignIn = () => {
+    router.push('/auth/sign-in');
 };
 </script>
 
