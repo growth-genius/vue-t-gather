@@ -10,25 +10,38 @@
             <div class="col-12 lg:col-10">
                 <form @submit.prevent="handleSubmit(!v$.$invalid)">
                     <div class="grid formgrid p-fluid">
-                        <div class="field mb-4 col-12 ml-2">
-                            <label
-                                for="travelGroupName"
-                                class="font-medium text-900"
-                                :class="{ 'p-error': v$.travelGroupName.$invalid && submitted }"
-                                >그룹 명</label
+                        <div class="field field mb-4 col-12">
+                            <div class="p-float-label w-full">
+                                <input-text
+                                    id="travelGroupName"
+                                    v-model="v$.travelGroupName.$model"
+                                    class="w-full"
+                                    :class="{ 'p-invalid': v$.travelGroupName.$invalid && submitted }"
+                                    aria-describedby="email-error"
+                                />
+                                <label
+                                    for="travelGroupName"
+                                    :class="{ 'p-error': v$.travelGroupName.$invalid && submitted }"
+                                >
+                                    그룹명
+                                </label>
+                            </div>
+                            <span v-if="v$.travelGroupName.$error && submitted">
+                                <span
+                                    id="email-error"
+                                    v-for="(error, index) of v$.travelGroupName.$errors"
+                                    :key="index"
+                                >
+                                    <small class="p-error">{{ error.$message }}</small>
+                                </span>
+                            </span>
+                            <small
+                                v-else-if="
+                                    (v$.travelGroupName.$invalid && submitted) || v$.travelGroupName.$pending.$response
+                                "
+                                class="p-error"
+                                >그룹 명을 입력해 주세요</small
                             >
-                            <label
-                                for="travelGroupName"
-                                class="font-medium text-900"
-                                :class="{ 'p-error': v$.travelGroupName.$invalid && submitted }"
-                                >이메일</label
-                            >
-                            <InputText
-                                id="nickname"
-                                type="text"
-                                v-model="v$.travelGroupName.$model"
-                                input-id="travelGroupName"
-                            />
                         </div>
                         <section v-if="result.dataURL && result.blobURL" class="section q-mx-lg">
                             <div class="preview">
@@ -52,16 +65,30 @@
                             <label for="startDate" class="font-medium text-900">시작일자</label>
                             <Calendar v-model="travelGroup.startDate" dateFormat="yy-mm-dd" input-id="startDate" />
                         </div>
-                        <div class="field mb-4 col-12">
-                            <label for="participantCount" class="font-medium text-900">참가자 제한 수</label>
-                            <InputNumber v-model="travelGroup.participantCount" input-id="participantCount" />
+                        <div class="field field mb-4 col-12">
+                            <div class="w-full">
+                                <label for="participantCount" class="font-medium text-900">참가자 제한 수</label>
+                                <InputNumber
+                                    v-model="v$.participantCount.$model"
+                                    :class="{ 'p-invalid': v$.participantCount.$invalid && submitted }"
+                                    input-id="participantCount"
+                                />
+                            </div>
+                            <span v-if="v$.participantCount.$error && submitted">
+                                <span
+                                    id="email-error"
+                                    v-for="(error, index) of v$.participantCount.$errors"
+                                    :key="index"
+                                >
+                                    <small class="p-error">{{ error.$message }}</small>
+                                </span>
+                            </span>
                         </div>
 
-                        <div class="field mb-4 col-12">
-                            <label for="open" class="font-medium text-900">공개 여부</label>
-                            <InputSwitch v-model="travelGroup.open" input-id="open" />
+                        <div class="field mb-4 col-12 flex align-items-center">
+                            <label for="open" class="font-medium text-900 mr-5">공개 여부</label>
+                            <InputSwitch v-model="v$.open.$model" input-id="open" />
                         </div>
-
                         <div class="col-12 flex justify-content-center mt-5">
                             <Button label="등록" type="submit" class="w-auto mt-3"></Button>
                         </div>
@@ -77,7 +104,7 @@ import { onMounted, reactive, ref } from 'vue';
 import ImagePreView from '@/components/common/ImagePreView.vue';
 import { getTravelRegisterInit } from '@/api/travel';
 import { useVuelidate } from '@vuelidate/core';
-import { required } from '@vuelidate/validators';
+import { helpers, maxValue, minValue, required } from '@vuelidate/validators';
 
 onMounted(() => {
     getInit();
@@ -97,14 +124,20 @@ const travelGroup = ref({
     participantCount: 0,
     travelThemes: [],
     startDate: new Date(),
+    open: true,
 });
 const imageFile = ref(null);
 
 const rules = {
-    travelGroupName: { required },
-    participantCount: { required },
-    travelThemes: { required },
+    travelGroupName: { required: helpers.withMessage('그룹 명을 입력해 주세요.', required) },
+    participantCount: {
+        required: helpers.withMessage('참가제한 인원을 입력해 주세요.', required),
+        minValue: helpers.withMessage('참가제한 인원을 최소 1명 이상 입력해 주세요.', minValue(1)),
+        maxValue: helpers.withMessage('참가인원은 최대 100명까지만 가능합니다.', maxValue(100)),
+    },
+    travelThemes: { required: helpers.withMessage('테마를 한개 이상 선택해 주세요.', required) },
     startDate: { required },
+    open: { required },
 };
 const v$ = useVuelidate(rules, travelGroup);
 const submitted = ref(false);

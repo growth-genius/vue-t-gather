@@ -26,6 +26,7 @@
                                 />
                                 <label for="email" :class="{ 'p-error': v$.email.$invalid && submitted }">이메일</label>
                             </div>
+
                             <span v-if="v$.email.$error && submitted">
                                 <span id="email-error" v-for="(error, index) of v$.email.$errors" :key="index">
                                     <small class="p-error">{{ error.$message }}</small>
@@ -38,7 +39,7 @@
                             >
                         </div>
 
-                        <div class="field">
+                        <div class="field pt-3">
                             <div class="p-float-label p-input-icon-right w-full pass-div">
                                 <password
                                     id="password"
@@ -88,7 +89,7 @@
 
 <script setup>
 import { useVuelidate } from '@vuelidate/core';
-import { email, required } from '@vuelidate/validators';
+import { email, helpers, required } from '@vuelidate/validators';
 import { ref } from 'vue';
 import { useAuthStore } from '@/store/auth';
 import { useRouter } from 'vue-router';
@@ -96,8 +97,11 @@ import { useToast } from 'primevue/usetoast';
 
 const submitted = ref(false);
 const rules = {
-    email: { required, email },
-    password: { required },
+    email: {
+        required: helpers.withMessage('이메일을 입력해 주세요.', required),
+        email: helpers.withMessage('이메일 형식을 올바르게 입력해 주세요.', email),
+    },
+    password: { required: helpers.withMessage('비밀번호를 입력해 주세요.', required) },
 };
 const state = ref({
     email: '',
@@ -123,8 +127,13 @@ const login = async isValid => {
     if (res.success) {
         await router.push('/');
     } else {
-        console.log(res.message);
-        await toast.add({ severity: 'warn', summary: '로그인 실패', detail: res.message, life: 3000 });
+        await toast.add({
+            group: 'block',
+            summary: '로그인 실패',
+            detail: res.message,
+            closable: true,
+            life: 3000,
+        });
     }
 };
 </script>
