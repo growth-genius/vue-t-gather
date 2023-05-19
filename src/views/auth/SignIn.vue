@@ -69,6 +69,7 @@
                         label="Sign In with GitHub"
                         icon="pi pi-github"
                         class="w-full p-button-secondary bg-black-alpha-90 mb-2"
+                        @click="test"
                     ></Button>
                     <Button
                         label="Sign In with Google"
@@ -117,6 +118,10 @@ const authStore = useAuthStore();
 
 const router = useRouter();
 const toast = useToast();
+const test = async () => {
+    const res = await authStore.TEST();
+    console.log(res);
+};
 const login = async isValid => {
     submitted.value = true;
     if (!isValid) {

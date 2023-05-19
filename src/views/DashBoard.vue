@@ -1,74 +1,121 @@
 <template>
-    <div class="surface-ground">
-        <div class="grid">
-            <div class="col-12 md:col-6 lg:col-4 xl:col-3 p-3" v-for="(item, idx) in data" :key="idx">
-                <div class="surface-card shadow-2 border-round p-4">
-                    <div class="relative border-bottom-1 surface-border pb-4">
-                        <img
-                            :src="require(`@/assets/images/thumbnail/${item.image}`)"
-                            :alt="item.title"
-                            class="w-full h-full md:h-13rem"
-                        />
-                        <p
-                            class="absolute px-2 py-1 border-round-lg text-sm font-normal text-white mt-0 mb-0"
-                            style="
-                                background-color: rgba(255, 255, 255, 0.3);
-                                backdrop-filter: blur(10px);
-                                top: 3%;
-                                left: 3%;
-                            "
-                        >
-                            {{ item.title }}
-                        </p>
-                    </div>
-                    <div class="flex border-bottom-1 surface-border py-3">
-                        <Avatar
-                            :image="require(`@/assets/images/avatar/${item.avatar}`)"
-                            :alt="item.accountId"
-                            size="large"
-                            shape="circle"
-                            class="mr-3"
-                        />
-                        <div class="flex flex-column align-items-start">
-                            <span class="text-xl text-900 font-medium mb-1">{{ item.accountId }}</span>
-                            <span class="text-600 font-medium mb-2 my-3">{{ item.description }}</span>
-                            <div>
-                                <span
-                                    class="bg-blue-50 text-blue-400 border-round inline-flex py-1 px-2 text-sm mr-2"
-                                    :class="
-                                        idx % 3 === 0
-                                            ? 'bg-blue-50 text-blue-400'
-                                            : idx % 2 === 0
-                                            ? 'bg-red-50 text-red-400'
-                                            : 'bg-orange-50 text-orange-400'
-                                    "
-                                    v-for="(theme, idx) in item.themes"
-                                    :key="idx"
-                                    >{{ theme }}</span
-                                >
+    <Carousel
+        :value="products"
+        :numVisible="1"
+        :numScroll="1"
+        :responsiveOptions="responsiveOptions"
+        :showNavigators="false"
+    >
+        <template #item="slotProps">
+            <div class="border-1 surface-border border-round text-center" style="width: 100%">
+                <div class="mb-3">
+                    <img
+                        :src="require(`@/assets/images/banner/${slotProps.data.imgUrl}`)"
+                        :alt="slotProps.data.name"
+                        class="w-12 shadow-2 h-30rem"
+                    />
+                </div>
+            </div>
+        </template>
+    </Carousel>
+
+    <div class="flex justify-content-center">
+        <div class="col-1"></div>
+        <div class="col-10">
+            <div class="grid">
+                <div class="col-12 md:col-6 lg:col-4 xl:col-3 p-3" v-for="(item, idx) in data" :key="idx">
+                    <div class="surface-card shadow-2 border-round-3xl p-4">
+                        <div class="relative border-bottom-1 surface-border pb-4">
+                            <img
+                                :src="require(`@/assets/images/thumbnail/${item.image}`)"
+                                :alt="item.title"
+                                class="w-full h-full md:h-13rem"
+                            />
+                            <p
+                                class="absolute px-2 py-1 border-round-lg text-sm font-normal text-white mt-0 mb-0"
+                                style="
+                                    background-color: rgba(255, 255, 255, 0.3);
+                                    backdrop-filter: blur(10px);
+                                    top: 3%;
+                                    left: 3%;
+                                "
+                            >
+                                {{ item.title }}
+                            </p>
+                        </div>
+                        <div class="flex border-bottom-1 surface-border py-3">
+                            <Avatar
+                                :image="require(`@/assets/images/avatar/${item.avatar}`)"
+                                :alt="item.accountId"
+                                size="large"
+                                shape="circle"
+                                class="mr-3"
+                            />
+                            <div class="flex flex-column align-items-start">
+                                <span class="text-xl text-900 font-medium mb-1">{{ item.accountId }}</span>
+                                <span class="text-600 font-medium mb-2 my-3">{{ item.description }}</span>
+                                <div>
+                                    <span
+                                        class="bg-blue-50 text-blue-400 border-round inline-flex py-1 px-2 text-sm mr-2"
+                                        :class="
+                                            idx % 3 === 0
+                                                ? 'bg-blue-50 text-blue-400'
+                                                : idx % 2 === 0
+                                                ? 'bg-red-50 text-red-400'
+                                                : 'bg-orange-50 text-orange-400'
+                                        "
+                                        v-for="(theme, idx) in item.themes"
+                                        :key="idx"
+                                        >{{ theme }}</span
+                                    >
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="flex justify-content-between pt-4">
-                        <Button
-                            label="View"
-                            icon="pi pi-search"
-                            class="p-button-outlined p-button-secondary w-6 mr-2 p-button-sm"
-                            v-tooltip.top="'상세 보기'"
-                        ></Button>
-                        <Button
-                            label="Follow"
-                            icon="pi pi-user-plus"
-                            class="p-button-outlined p-button-secondary w-6 ml-2 p-button-sm"
-                        ></Button>
+                        <div class="flex justify-content-between pt-4">
+                            <Button
+                                label="View"
+                                icon="pi pi-search"
+                                class="p-button-outlined p-button-secondary w-6 mr-2 p-button-sm"
+                                v-tooltip.top="'상세 보기'"
+                            ></Button>
+                            <Button
+                                label="Follow"
+                                icon="pi pi-user-plus"
+                                class="p-button-outlined p-button-secondary w-6 ml-2 p-button-sm"
+                            ></Button>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
+        <div class="col-1"></div>
     </div>
 </template>
 
 <script setup>
+import { ref } from 'vue';
+
+const products = ref([
+    { imgUrl: 'ecommerce-1.jpg', name: '이름' },
+    { imgUrl: 'business-1.jpg', name: '비지니스' },
+]);
+const responsiveOptions = ref([
+    {
+        breakpoint: '1199px',
+        numVisible: 3,
+        numScroll: 3,
+    },
+    {
+        breakpoint: '991px',
+        numVisible: 2,
+        numScroll: 2,
+    },
+    {
+        breakpoint: '767px',
+        numVisible: 1,
+        numScroll: 1,
+    },
+]);
 const data = [
     {
         accountId: 'love4950',

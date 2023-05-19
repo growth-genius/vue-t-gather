@@ -1,7 +1,8 @@
 import { defineStore } from 'pinia';
 import getters from './getters';
-import { signIn } from '@/api/auth';
+import { signIn, test } from '@/api/auth';
 import { useCookies } from 'vue3-cookies';
+import router from '@/router';
 
 const cookie = useCookies();
 export const useAuthStore = defineStore('authStore', {
@@ -27,12 +28,16 @@ export const useAuthStore = defineStore('authStore', {
             }
             return res;
         },
-        LOGOUT() {
-            console.log('로그 아웃 해라');
+        async LOGOUT() {
             this.accessToken = '';
             cookie.cookies.remove(process.env.VUE_APP_AUTH_TOKEN);
             cookie.cookies.remove(process.env.VUE_APP_EMAIL);
             cookie.cookies.remove(process.env.VUE_APP_AUTH_REFRESH_TOKEN);
+            await router.push('/');
+        },
+        async TEST() {
+            const res = await test();
+            console.log(res);
         },
     },
 });
