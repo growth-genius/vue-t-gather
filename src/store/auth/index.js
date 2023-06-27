@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia';
 import getters from './getters';
-import { signIn, test } from '@/api/auth';
+import { signIn } from '@/api/auth';
 import { useCookies } from 'vue3-cookies';
 import router from '@/router';
 
@@ -34,10 +34,6 @@ export const useAuthStore = defineStore('authStore', {
             cookie.cookies.remove(process.env.VUE_APP_EMAIL);
             cookie.cookies.remove(process.env.VUE_APP_AUTH_REFRESH_TOKEN);
             await router.push('/');
-        },
-        async TEST() {
-            const res = await test();
-            console.log(res);
         },
     },
 });
