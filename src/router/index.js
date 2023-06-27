@@ -54,12 +54,7 @@ const router = createRouter({
 });
 
 router.beforeEach((to, from, next) => {
-    console.log(to);
-    console.log(from);
     const store = useAuthStore();
-    console.log(to.meta.auth);
-    console.log(store.isLogin);
-    console.log(!to.meta.auth);
     if (!to.meta.auth && !store.isLogin) {
         next('/');
     }

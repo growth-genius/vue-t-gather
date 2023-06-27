@@ -12,7 +12,7 @@
                     <img
                         :src="require(`@/assets/images/banner/${slotProps.data.imgUrl}`)"
                         :alt="slotProps.data.name"
-                        class="w-12 shadow-2 h-30rem"
+                        class="w-12 shadow-2 h-20rem"
                     />
                 </div>
             </div>
@@ -20,8 +20,8 @@
     </Carousel>
 
     <div class="flex justify-content-center">
-        <div class="col-1"></div>
-        <div class="col-10">
+        <div class="col-3"></div>
+        <div class="col-8">
             <div class="grid">
                 <div class="col-12 md:col-6 lg:col-4 xl:col-3 p-3" v-for="(item, idx) in data" :key="idx">
                     <div class="surface-card shadow-2 border-round-3xl p-4">
@@ -88,16 +88,27 @@
                 </div>
             </div>
         </div>
-        <div class="col-1"></div>
+        <div class="col-3"></div>
     </div>
 </template>
 
 <script setup>
 import { ref } from 'vue';
+import { getTravelList } from '@/api/travel';
+
+const findTravelList = async () => {
+    console.log('???');
+    const travelList = await getTravelList();
+    console.log(travelList);
+};
+
+findTravelList();
 
 const products = ref([
-    { imgUrl: 'ecommerce-1.jpg', name: '이름' },
-    { imgUrl: 'business-1.jpg', name: '비지니스' },
+    { imgUrl: 'jeju.jpg', name: '이름' },
+    { imgUrl: 'tgather.jpg', name: '이름' },
+    { imgUrl: 'shallwetravel.jpg', name: '비지니스' },
+    { imgUrl: 'board-travel.jpg', name: '비지니스' },
 ]);
 const responsiveOptions = ref([
     {

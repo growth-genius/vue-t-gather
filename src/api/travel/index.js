@@ -1,10 +1,20 @@
-import { axiosGet } from '@/api';
+import { axiosGet, axiosPost } from '@/api';
 
-const getTravelList = () => {
-    return axiosGet('travel-group');
+const getTravelList = (travelThemes = '') => {
+    return axiosGet(`/travel-group/group?travelThemes=${travelThemes}`);
 };
 
 const getTravelRegisterInit = () => {
-    return axiosGet('/travel-group/register/init');
+    return axiosGet('/travel-group/group/register/init');
 };
-export { getTravelList, getTravelRegisterInit };
+
+/**
+ * 여행 그룹 등록
+ * @param data
+ * @returns {*}
+ */
+const saveTravelGroup = data => {
+    return axiosPost('/travel-group/group', data);
+};
+
+export { getTravelList, getTravelRegisterInit, saveTravelGroup };
