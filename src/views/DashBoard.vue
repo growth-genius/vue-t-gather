@@ -27,7 +27,7 @@
                     <div class="surface-card shadow-2 border-round-3xl p-4">
                         <div class="relative border-bottom-1 surface-border pb-4">
                             <img
-                                :src="require(`@/assets/${item.imageUrl || 'header.png'}`)"
+                                :src="`data:image/jpeg;base64, ${item.imageUrl}`"
                                 :alt="item.groupName"
                                 class="w-full h-full md:h-13rem"
                             />
