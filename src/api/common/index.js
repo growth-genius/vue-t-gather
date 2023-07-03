@@ -1,5 +1,6 @@
 import router from '@/router';
 import { deleteCookie, getCookie, saveCookie } from '@/utils/cookies';
+import { useAuthStore } from '@/store/auth';
 
 let isTokenRefreshing = false;
 let refreshSubscribers = [];
@@ -16,12 +17,11 @@ function setInterceptors(instance) {
     // Add a request interceptor
     instance.interceptors.request.use(
         function (config) {
-            config.headers[process.env.VUE_APP_AUTHRIZATION] = `Bearer ${getCookie(process.env.VUE_APP_AUTH_TOKEN)}`;
+            config.headers[process.env.VUE_APP_AUTHORIZATION] = `Bearer ${getCookie(process.env.VUE_APP_AUTH_TOKEN)}`;
             return config;
         },
         function (error) {
             // Do something with request error
-            console.log('API 호출 전 에러');
             return Promise.reject(error);
         },
     );
@@ -73,6 +73,10 @@ function setInterceptors(instance) {
                                 onTokenRefreshed(newAccessToken);
                             })
                             .catch(() => {
+                                const authStore = useAuthStore();
+                                authStore.clearInfo();
+                                deleteLoginCookie();
+                                router.push('/dashboard');
                                 isTokenRefreshing = false;
                             });
                     }

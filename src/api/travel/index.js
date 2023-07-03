@@ -5,7 +5,7 @@ const getTravelList = (travelThemes = '') => {
 };
 
 const getTravelRegisterInit = () => {
-    return axiosGet('/travel-group/group/register/init');
+    return axiosGet('/travel-group/register/init');
 };
 
 /**
@@ -17,4 +17,8 @@ const saveTravelGroup = data => {
     return axiosPost('/travel-group/group', data);
 };
 
-export { getTravelList, getTravelRegisterInit, saveTravelGroup };
+const getTravelGroup = travelGroupId => {
+    return axiosGet(`/travel-group/${travelGroupId}`);
+};
+
+export { getTravelList, getTravelRegisterInit, saveTravelGroup, getTravelGroup };

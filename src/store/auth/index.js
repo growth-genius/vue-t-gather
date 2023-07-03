@@ -35,5 +35,13 @@ export const useAuthStore = defineStore('authStore', {
             cookie.cookies.remove(process.env.VUE_APP_AUTH_REFRESH_TOKEN);
             await router.push('/');
         },
+        async clearInfo() {
+            this.email = '';
+            this.accessToken = '';
+            this.refreshToken = '';
+            this.account = {
+                accountId: 0,
+            };
+        },
     },
 });

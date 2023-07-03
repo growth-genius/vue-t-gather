@@ -34,6 +34,17 @@
                                 >그룹 명을 입력해 주세요</small
                             >
                         </div>
+                        <div class="field field mb-4 col-12 flex">
+                            <div class="flex align-items-center" v-for="(item, idx) in travelThemes" :key="idx">
+                                <Checkbox
+                                    v-model="travelGroup.travelThemes"
+                                    :inputId="item.code"
+                                    name="pizza"
+                                    :value="item.code"
+                                />
+                                <label :for="item.code" class="mx-2"> {{ item.title }} </label>
+                            </div>
+                        </div>
                         <section v-if="result.dataURL && result.blobURL" class="section q-mx-lg">
                             <div class="preview">
                                 <img :src="result.dataURL" alt="" style="min-width: 100%" />
@@ -41,7 +52,6 @@
                         </section>
                         <div class="field mb-4 col-12" style="width: 50%">
                             <label for="avatar" class="font-medium text-900">배너</label>
-
                             <div class="flex align-items-center">
                                 <input type="file" @change="selectFile($event)" />
                             </div>
@@ -108,6 +118,7 @@ onMounted(() => {
 });
 const getInit = async () => {
     const res = await getTravelRegisterInit();
+    console.log(res);
     if (res.success) {
         travelThemes.value = res.response.travelThemes;
     }
@@ -120,6 +131,7 @@ const travelGroup = ref({
     groupName: '',
     travelThemes: [],
     startDate: new Date(),
+    imageUrl: '',
     limitParticipantCount: 1,
     limitedParticipant: false,
     open: true,
@@ -145,6 +157,7 @@ const updatePic = (dataUrl, blob) => {
     result.dataURL = dataUrl;
     result.blobURL = blob;
     isShowModal.value = false;
+    travelGroup.value.imageUrl = dataUrl;
 };
 
 const uploadInput = ref(null);
@@ -190,7 +203,8 @@ const saveGroup = async isValid => {
     if (!isValid) {
         return;
     }
-    const res = await saveTravelGroup();
+    console.log(travelGroup.value);
+    const res = await saveTravelGroup(travelGroup.value);
     console.log(res);
 };
 </script>
