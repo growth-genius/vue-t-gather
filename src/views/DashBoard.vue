@@ -44,18 +44,24 @@
                         </div>
                         <div class="flex border-bottom-1 surface-border py-3">
                             <Avatar
-                                v-for="(travelGroupMember, idx) in item.travelGroupMemberList"
-                                v-show="travelGroupMember.travelGroupRole === 'LEADER'"
+                                v-show="item.travelGroupMemberDtoList[0]"
                                 :key="idx"
-                                :image="
-                                    require(`@/assets/images/avatar/${travelGroupMember.profileImage || 'user.png'}`)
-                                "
-                                :alt="travelGroupMember.nickname"
+                                :image="`${
+                                    item.travelGroupMemberDtoList[0].profileImage
+                                        ? 'data:image/jpeg;base64,' + item.travelGroupMemberDtoList[0].profileImage
+                                        : require('@/assets/images/avatar/user.png')
+                                }`"
+                                :alt="item.travelGroupMemberDtoList[0].nickname"
                                 size="large"
                                 shape="circle"
                                 class="mr-3"
                             />
                             <div class="flex flex-column align-items-start">
+                                <div
+                                    class="bg-green-500 text-white font-bold border-round inline-flex py-1 px-2 text-base mr-2"
+                                >
+                                    {{ item.travelGroupMemberDtoList[0].nickname }}
+                                </div>
                                 <span class="text-600 font-medium mb-2 my-3">{{ item.description }}</span>
                                 <div>
                                     <span
