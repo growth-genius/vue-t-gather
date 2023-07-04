@@ -79,6 +79,7 @@ import { storeToRefs } from 'pinia';
 const { isLogin } = storeToRefs(useAuthStore());
 
 const { LOGOUT } = useAuthStore();
+
 const goCreateGroupPage = () => {
     router.push('/travel/register-group');
 };

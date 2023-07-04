@@ -62,7 +62,9 @@
                                 >
                                     {{ item.travelGroupMemberDtoList[0].nickname }}
                                 </div>
-                                <span class="text-600 font-medium mb-2 my-3">{{ item.description }}</span>
+                                <span class="text-600 font-medium mb-2 my-3 travel-description">{{
+                                    item.description
+                                }}</span>
                                 <div>
                                     <span
                                         class="bg-blue-50 text-blue-400 border-round inline-flex py-1 px-2 text-sm mr-2"
@@ -82,13 +84,14 @@
                         </div>
                         <div class="flex justify-content-between pt-4">
                             <Button
-                                label="View"
+                                label="자세히"
                                 icon="pi pi-search"
                                 class="p-button-outlined p-button-secondary w-6 mr-2 p-button-sm"
                                 v-tooltip.top="'상세 보기'"
+                                @click="goSingleTravelGroup(item)"
                             ></Button>
                             <Button
-                                label="Follow"
+                                label="참여"
                                 icon="pi pi-user-plus"
                                 class="p-button-outlined p-button-secondary w-6 ml-2 p-button-sm"
                             ></Button>
@@ -104,7 +107,9 @@
 <script setup>
 import { ref } from 'vue';
 import { getTravelListAll } from '@/api/travel';
+import { useRouter } from 'vue-router';
 
+const router = useRouter();
 const travelGroupList = ref([]);
 
 const findTravelList = async () => {
@@ -113,6 +118,10 @@ const findTravelList = async () => {
     if (res.success) {
         travelGroupList.value = res.response.travelGroupDtoList;
     }
+};
+
+const goSingleTravelGroup = item => {
+    router.push(`/travel/single-group?travelGroupId=${item.travelGroupId}`);
 };
 
 findTravelList();
@@ -142,3 +151,14 @@ const responsiveOptions = ref([
     },
 ]);
 </script>
+
+<style>
+.travel-description {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    word-break: break-all;
+    width: 100px;
+    height: 20px;
+}
+</style>
