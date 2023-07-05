@@ -93,6 +93,7 @@
                             <Button
                                 label="참여"
                                 icon="pi pi-user-plus"
+                                @click="joinTravelGroup(item.travelGroupId)"
                                 class="p-button-outlined p-button-secondary w-6 ml-2 p-button-sm"
                             ></Button>
                         </div>
@@ -102,19 +103,20 @@
         </div>
         <div class="col-3"></div>
     </div>
+    <join-travel-group-modal :isShowModal="isShowModal" />
 </template>
 
 <script setup>
 import { ref } from 'vue';
 import { getTravelListAll } from '@/api/travel';
+import JoinTravelGroupModal from '@/components/modal/JoinTravelGroupModal.vue';
 import { useRouter } from 'vue-router';
 
 const router = useRouter();
 const travelGroupList = ref([]);
-
+const isShowModal = ref(false);
 const findTravelList = async () => {
     const res = await getTravelListAll();
-    console.log(res);
     if (res.success) {
         travelGroupList.value = res.response.travelGroupDtoList;
     }
@@ -122,6 +124,11 @@ const findTravelList = async () => {
 
 const goSingleTravelGroup = item => {
     router.push(`/travel/single-group?travelGroupId=${item.travelGroupId}`);
+};
+
+const joinTravelGroup = travelGroupId => {
+    isShowModal.value = true;
+    console.log(travelGroupId);
 };
 
 findTravelList();
