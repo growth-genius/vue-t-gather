@@ -24,6 +24,10 @@ const routes = [
                         path: 'register-group',
                         component: () => import('@/views/travel/RegisterTravelGroup.vue'),
                     },
+                    {
+                        path: 'single-group',
+                        component: () => import('@/views/travel/SingleTravelGroup.vue'),
+                    },
                 ],
             },
         ],

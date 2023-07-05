@@ -12,6 +12,10 @@ const getTravelListAll = () => {
     return axiosGet('/travel-group/open/all');
 };
 
+const getTravelGroupById = travelGroupId => {
+    return axiosGet(`/travel-group/${travelGroupId}`);
+};
+
 const getTravelRegisterInit = () => {
     return axiosGet('/travel-group/group/register/init');
 };
@@ -29,4 +33,11 @@ const saveTravelGroup = data => {
     return axiosPost('/travel-group/group', data);
 };
 
-export { getTravelList, getTravelRegisterInit, saveTravelGroup, getTravelListAll, modifyTravelGroup };
+export {
+    getTravelList,
+    getTravelRegisterInit,
+    saveTravelGroup,
+    getTravelListAll,
+    modifyTravelGroup,
+    getTravelGroupById,
+};
