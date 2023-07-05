@@ -24,6 +24,10 @@ const modifyTravelGroup = travelGroupId => {
     return axiosPatch(`/travel-group/${travelGroupId}`);
 };
 
+const joinTravelGroup = (travelGroupId, data) => {
+    return axiosPost(`/travel-group/${travelGroupId}/member`, data);
+};
+
 /**
  * 여행 그룹 등록
  * @param data
@@ -40,4 +44,5 @@ export {
     getTravelListAll,
     modifyTravelGroup,
     getTravelGroupById,
+    joinTravelGroup,
 };
