@@ -14,4 +14,8 @@ function getInit() {
     return axiosGet('/account/login-form');
 }
 
-export { signIn, checkEmailToken, getInit };
+function getLoginUser() {
+    return axiosGet('/account/me');
+}
+
+export { signIn, checkEmailToken, getInit, getLoginUser };

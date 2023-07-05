@@ -90,6 +90,9 @@ const goDashBoard = () => {
 const items = ref([
     {
         icon: 'pi pi-info',
+        command: async () => {
+            router.push('/my-page');
+        },
         label: '내 프로필',
     },
     {

@@ -109,7 +109,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-3"></div>
+        <div class="lg:col-2"></div>
     </div>
     <join-travel-group-modal
         :travel-group="travelGroup"
@@ -225,6 +225,7 @@ const responsiveOptions = ref([
     width: 100px;
     height: 20px;
 }
+
 .travel-group-tab {
     background-color: #eff3f9;
 }
