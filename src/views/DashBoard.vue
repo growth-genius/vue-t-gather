@@ -103,7 +103,11 @@
         </div>
         <div class="col-3"></div>
     </div>
-    <join-travel-group-modal :isShowModal="isShowModal" />
+    <join-travel-group-modal
+        :travel-group="travelGroup"
+        @cancel:travel-group="cancelJoinTravelGroup"
+        :isShowJoinGroupModal="isShowJoinGroupModal"
+    />
 </template>
 
 <script setup>
@@ -111,10 +115,14 @@ import { ref } from 'vue';
 import { getTravelListAll } from '@/api/travel';
 import JoinTravelGroupModal from '@/components/modal/JoinTravelGroupModal.vue';
 import { useRouter } from 'vue-router';
+import { useModalStore } from '@/store/modal';
+
+const modalStore = useModalStore();
 
 const router = useRouter();
 const travelGroupList = ref([]);
-const isShowModal = ref(false);
+const isShowJoinGroupModal = ref(false);
+const travelGroup = ref('');
 const findTravelList = async () => {
     const res = await getTravelListAll();
     if (res.success) {
@@ -127,8 +135,12 @@ const goSingleTravelGroup = item => {
 };
 
 const joinTravelGroup = travelGroupId => {
-    isShowModal.value = true;
+    modalStore.toggleJoinGroupModal();
     console.log(travelGroupId);
+};
+
+const cancelJoinTravelGroup = () => {
+    isShowJoinGroupModal.value = false;
 };
 
 findTravelList();
