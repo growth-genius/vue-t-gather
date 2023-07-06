@@ -113,6 +113,7 @@
 <script setup>
 import { ref } from 'vue';
 import { getTravelListAll } from '@/api/travel';
+
 import JoinTravelGroupModal from '@/components/modal/JoinTravelGroupModal.vue';
 import { useRouter } from 'vue-router';
 import { useModalStore } from '@/store/modal';
@@ -136,7 +137,7 @@ const goSingleTravelGroup = item => {
 
 const joinTravelGroup = travelGroupId => {
     modalStore.toggleJoinGroupModal();
-    console.log(travelGroupId);
+    modalStore.setTravelGroupId(travelGroupId);
 };
 
 const cancelJoinTravelGroup = () => {

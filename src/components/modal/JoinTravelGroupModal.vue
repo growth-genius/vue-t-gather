@@ -49,7 +49,12 @@
                     <input-text id="nickname" v-model="v$.nickname.$model" class="w-7" />
                 </template>
                 <template #footer>
-                    <Button label="참여하기" icon="pi pi-check" style="background-color: #03d069" />
+                    <Button
+                        label="참여하기"
+                        icon="pi pi-check"
+                        @click="requestJoinTravelGroup"
+                        style="background-color: #03d069"
+                    />
                 </template>
             </Card>
         </div>
@@ -61,9 +66,11 @@ import { helpers, required } from '@vuelidate/validators';
 import { useVuelidate } from '@vuelidate/core';
 import { useModalStore } from '@/store/modal';
 import ImagePreView from '@/components/common/ImagePreView.vue';
+import { useRouter } from 'vue-router';
 
 const modalStore = useModalStore();
 
+const router = useRouter();
 const joinTravelGroup = ref({
     nickname: '',
     profileImage: '',
@@ -111,6 +118,13 @@ const cancelThumbnail = () => {
 };
 const cancelJoinTravelGroup = () => {
     emits('cancel:travelGroup');
+};
+
+const requestJoinTravelGroup = () => {
+    const travelGroupId = modalStore.getTravelGroupId;
+    console.log(travelGroupId);
+
+    // router.push(`/travel/${travelGroupId}/member`, joinTravelGroup);
 };
 
 const emits = defineEmits(['update:travelGroup', 'cancel:travelGroup']);

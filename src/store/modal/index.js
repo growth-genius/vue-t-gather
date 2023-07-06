@@ -10,5 +10,11 @@ export const useModalStore = defineStore('modalStore', {
         toggleJoinGroupModal() {
             this.showJoinGroupModal = !this.showJoinGroupModal;
         },
+        toggleProfileImageModal() {
+            this.showProfileImageModal = !this.showProfileImageModal;
+        },
+        setTravelGroupId(travelGroupId) {
+            this.travelGroupId = travelGroupId;
+        },
     },
 });
