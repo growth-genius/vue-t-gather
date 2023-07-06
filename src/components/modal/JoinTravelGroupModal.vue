@@ -9,14 +9,19 @@
         <div class="justify-content-center text-center">
             <Card>
                 <template #header>
-                    <div class="flex justify-content-evenly">
-                        <span class="bold text-2xl">여행그룹 참가 확인</span>
-                        <Button
-                            icon="pi pi-times"
-                            class="mr-2 p-button-danger p-button-sm"
-                            label="취소"
-                            @click="cancelJoinTravelGroup"
-                        />
+                    <div class="flex justify-content-around">
+                        <div />
+                        <div>
+                            <span class="bold text-2xl text-center">여행그룹 참가 확인</span>
+                        </div>
+                        <div>
+                            <Button
+                                icon="pi pi-times"
+                                class="mr-2 p-button-danger p-button-sm"
+                                label="취소"
+                                @click="cancelJoinTravelGroup"
+                            />
+                        </div>
                     </div>
                 </template>
                 <template #content>

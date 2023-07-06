@@ -140,7 +140,7 @@ const joinTravelGroup = travelGroupId => {
 };
 
 const cancelJoinTravelGroup = () => {
-    isShowJoinGroupModal.value = false;
+    modalStore.toggleJoinGroupModal();
 };
 
 findTravelList();
