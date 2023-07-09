@@ -27,11 +27,7 @@
                     <div class="surface-card shadow-2 border-round-3xl p-4">
                         <div class="relative border-bottom-1 surface-border pb-4">
                             <img
-                                :src="`${
-                                    item.imageUrl
-                                        ? 'data:image/jpeg;base64,' + item.imageUrl
-                                        : require('@/assets/tgather.png')
-                                }`"
+                                :src="`${item.imageUrl ? item.imageUrl : require('@/assets/tgather.png')}`"
                                 :alt="item.groupName"
                                 class="w-full h-full md:h-13rem"
                             />
@@ -48,7 +44,7 @@
                                 :key="idx"
                                 :image="`${
                                     item.travelGroupMemberDtoList[0].profileImage
-                                        ? 'data:image/jpeg;base64,' + item.travelGroupMemberDtoList[0].profileImage
+                                        ? item.travelGroupMemberDtoList[0].profileImage
                                         : require('@/assets/images/avatar/user.png')
                                 }`"
                                 :alt="item.travelGroupMemberDtoList[0].nickname"
