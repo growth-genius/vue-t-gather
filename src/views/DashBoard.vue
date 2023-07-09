@@ -113,10 +113,10 @@
 <script setup>
 import { ref } from 'vue';
 import { getTravelListAll } from '@/api/travel';
-
 import JoinTravelGroupModal from '@/components/modal/JoinTravelGroupModal.vue';
 import { useRouter } from 'vue-router';
 import { useModalStore } from '@/store/modal';
+import { useAuthStore } from '@/store/auth';
 
 const modalStore = useModalStore();
 
@@ -136,6 +136,11 @@ const goSingleTravelGroup = item => {
 };
 
 const joinTravelGroup = travelGroupId => {
+    const store = useAuthStore();
+    if (!store.isLogin) {
+        alert('로그인 후 이용가능합니다.');
+        return;
+    }
     modalStore.toggleJoinGroupModal();
     modalStore.setTravelGroupId(travelGroupId);
 };
