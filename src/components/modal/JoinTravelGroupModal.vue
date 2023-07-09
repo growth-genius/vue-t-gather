@@ -46,13 +46,17 @@
                         class="buttonColorGreen"
                     />
                     <label for="nickname"> 닉네임 : </label>
-                    <input-text id="nickname" v-model="v$.nickname.$model" class="w-7" />
+                    <input-text
+                        id="nickname"
+                        v-model="v$.nickname.$model"
+                        :class="{ 'p-invalid': v$.nickname.$invalid && submitted }"
+                    />
                 </template>
                 <template #footer>
                     <Button
                         label="참여하기"
                         icon="pi pi-check"
-                        @click="requestJoinTravelGroup"
+                        @click="requestJoinTravelGroup(!v$.$invalid)"
                         style="background-color: #03d069"
                     />
                 </template>
@@ -66,25 +70,21 @@ import { helpers, required } from '@vuelidate/validators';
 import { useVuelidate } from '@vuelidate/core';
 import { useModalStore } from '@/store/modal';
 import ImagePreView from '@/components/common/ImagePreView.vue';
-import { useRouter } from 'vue-router';
+import { joinTravelGroup } from '@/api/travel';
 
 const modalStore = useModalStore();
-
-const router = useRouter();
-const joinTravelGroup = ref({
-    nickname: '',
-    profileImage: '',
-});
-
 const isShowModal = ref(false);
 const uploadInput = ref(null);
 const pic = ref('');
 const imageFile = ref(null);
+const submitted = ref(false);
 
 const result = reactive({
     dataURL: '',
     blobURL: '',
 });
+
+const travelGroup = reactive({ profileImage: '', nickname: '' });
 
 const selectFile = event => {
     const file = event.target.files[0];
@@ -118,20 +118,38 @@ const cancelThumbnail = () => {
 };
 const cancelJoinTravelGroup = () => {
     emits('cancel:travelGroup');
+    cancelThumbnail();
+    cancelTravelGroup();
 };
 
-const requestJoinTravelGroup = () => {
-    const travelGroupId = modalStore.getTravelGroupId;
-    console.log(travelGroupId);
+const cancelTravelGroup = () => {
+    travelGroup.profileImage = '';
+    travelGroup.nickname = '';
+};
 
-    // router.push(`/travel/${travelGroupId}/member`, joinTravelGroup);
+const requestJoinTravelGroup = async isValid => {
+    submitted.value = true;
+    const travelGroupId = modalStore.getTravelGroupId;
+    if (!isValid) {
+        return;
+    }
+    travelGroup.profileImage = pic.value;
+    const res = await joinTravelGroup(travelGroupId, travelGroup);
+    if (res.success) {
+        alert('여행그룹에 성공적으로 가입했습니다.');
+        cancelJoinTravelGroup();
+    } else {
+        alert(res.message);
+        cancelThumbnail();
+        cancelTravelGroup();
+    }
 };
 
 const emits = defineEmits(['update:travelGroup', 'cancel:travelGroup']);
 const rules = {
     nickname: { required: helpers.withMessage('닉네임을 입력해 주세요.', required) },
 };
-const v$ = useVuelidate(rules, joinTravelGroup);
+const v$ = useVuelidate(rules, travelGroup);
 </script>
 <style>
 .profile-button {
