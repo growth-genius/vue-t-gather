@@ -7,9 +7,7 @@
             <template #content>
                 <img
                     :src="`${
-                        detailTravelGroup.imageUrl
-                            ? 'data:image/jpeg;base64,' + detailTravelGroup.imageUrl
-                            : require('@/assets/tgather.png')
+                        detailTravelGroup.imageUrl ? detailTravelGroup.imageUrl : require('@/assets/tgather.png')
                     }`"
                     :alt="detailTravelGroup.groupName"
                     class="w-5 h-5"
@@ -19,7 +17,7 @@
                         v-show="detailTravelGroup.travelGroupMemberDtoList"
                         :image="`${
                             detailTravelGroup.travelGroupMemberDtoList[0].profileImage
-                                ? 'data:image/jpeg;base64,' + detailTravelGroup.travelGroupMemberDtoList[0].profileImage
+                                ? detailTravelGroup.travelGroupMemberDtoList[0].profileImage
                                 : require('@/assets/images/avatar/user.png')
                         }`"
                     />
