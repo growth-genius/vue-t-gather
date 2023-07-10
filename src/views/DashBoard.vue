@@ -18,7 +18,7 @@
             </div>
         </template>
     </Carousel>
-
+    <div class="flex"></div>
     <div class="flex justify-content-center">
         <div class="col-3"></div>
         <div class="col-8">
@@ -53,7 +53,7 @@
                                 >{{ theme }}</span
                             >
                         </div>
-                        <div class="flex py-3">
+                        <div class="flex py-3 align-items-center">
                             <Avatar
                                 v-show="item.travelGroupMemberDtoList[0]"
                                 :key="idx"
@@ -68,14 +68,9 @@
                                 class="mr-3"
                             />
                             <div class="flex flex-column align-items-start">
-                                <div
-                                    class="bg-green-500 text-white font-bold border-round inline-flex py-1 px-2 text-base mr-2"
-                                >
+                                <div class="text-black font-bold border-round inline-flex py-1 px-2 text-base mr-2">
                                     {{ item.travelGroupMemberDtoList[0].nickname }}
                                 </div>
-                                <span class="text-600 font-medium mb-2 my-3 travel-description">{{
-                                    item.description
-                                }}</span>
                             </div>
                         </div>
                         <div class="flex justify-content-between">
