@@ -25,20 +25,35 @@
             <div class="grid">
                 <div class="col-12 md:col-6 lg:col-4 xl:col-3 p-3" v-for="(item, idx) in travelGroupList" :key="idx">
                     <div class="surface-card shadow-2 border-round-3xl p-4">
-                        <div class="relative border-bottom-1 surface-border pb-4">
+                        <div class="relative pb-4">
                             <img
                                 :src="`${item.imageUrl ? item.imageUrl : require('@/assets/tgather.png')}`"
                                 :alt="item.groupName"
                                 class="w-full h-full md:h-13rem"
                             />
                             <p
-                                class="absolute px-2 py-1 border-round-lg text-sm text-center text-black mt-0 mb-0 font-bold"
+                                class="px-2 py-1 border-round-lg text-sm text-center text-black mt-0 mb-0 font-bold text-base"
                                 style="background-color: rgba(255, 255, 255, 0.3); left: 13%; right: 10%"
                             >
                                 {{ item.groupName }}
                             </p>
                         </div>
                         <div class="flex border-bottom-1 surface-border py-3">
+                            <span
+                                class="bg-blue-50 text-blue-400 border-round inline-flex py-1 px-2 text-sm mr-2"
+                                :class="
+                                    idx % 3 === 0
+                                        ? 'bg-blue-50 text-blue-400'
+                                        : idx % 2 === 0
+                                        ? 'bg-red-50 text-red-400'
+                                        : 'bg-orange-50 text-orange-400'
+                                "
+                                v-for="(theme, idx) in item.travelThemes"
+                                :key="idx"
+                                >{{ theme }}</span
+                            >
+                        </div>
+                        <div class="flex py-3">
                             <Avatar
                                 v-show="item.travelGroupMemberDtoList[0]"
                                 :key="idx"
@@ -61,24 +76,9 @@
                                 <span class="text-600 font-medium mb-2 my-3 travel-description">{{
                                     item.description
                                 }}</span>
-                                <div>
-                                    <span
-                                        class="bg-blue-50 text-blue-400 border-round inline-flex py-1 px-2 text-sm mr-2"
-                                        :class="
-                                            idx % 3 === 0
-                                                ? 'bg-blue-50 text-blue-400'
-                                                : idx % 2 === 0
-                                                ? 'bg-red-50 text-red-400'
-                                                : 'bg-orange-50 text-orange-400'
-                                        "
-                                        v-for="(theme, idx) in item.travelThemes"
-                                        :key="idx"
-                                        >{{ theme }}</span
-                                    >
-                                </div>
                             </div>
                         </div>
-                        <div class="flex justify-content-between pt-4">
+                        <div class="flex justify-content-between">
                             <Button
                                 label="자세히"
                                 icon="pi pi-search"
