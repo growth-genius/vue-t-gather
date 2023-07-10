@@ -67,7 +67,7 @@
                                 "
                                 v-for="(theme, idx) in item.travelThemes"
                                 :key="idx"
-                                >{{ theme.title }}</span
+                                >{{ theme }}</span
                             >
                         </div>
                         <div class="flex py-3 align-items-center">
