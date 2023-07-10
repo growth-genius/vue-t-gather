@@ -27,11 +27,7 @@
                     <div class="surface-card shadow-2 border-round-3xl p-4">
                         <div class="relative border-bottom-1 surface-border pb-4">
                             <img
-                                :src="`${
-                                    item.imageUrl
-                                        ? 'data:image/jpeg;base64,' + item.imageUrl
-                                        : require('@/assets/tgather.png')
-                                }`"
+                                :src="`${item.imageUrl ? item.imageUrl : require('@/assets/tgather.png')}`"
                                 :alt="item.groupName"
                                 class="w-full h-full md:h-13rem"
                             />
@@ -48,7 +44,7 @@
                                 :key="idx"
                                 :image="`${
                                     item.travelGroupMemberDtoList[0].profileImage
-                                        ? 'data:image/jpeg;base64,' + item.travelGroupMemberDtoList[0].profileImage
+                                        ? item.travelGroupMemberDtoList[0].profileImage
                                         : require('@/assets/images/avatar/user.png')
                                 }`"
                                 :alt="item.travelGroupMemberDtoList[0].nickname"
@@ -93,6 +89,7 @@
                             <Button
                                 label="참여"
                                 icon="pi pi-user-plus"
+                                @click="joinTravelGroup(item.travelGroupId)"
                                 class="p-button-outlined p-button-secondary w-6 ml-2 p-button-sm"
                             ></Button>
                         </div>
@@ -102,19 +99,29 @@
         </div>
         <div class="col-3"></div>
     </div>
+    <join-travel-group-modal
+        :travel-group="travelGroup"
+        @cancel:travel-group="cancelJoinTravelGroup"
+        :isShowJoinGroupModal="isShowJoinGroupModal"
+    />
 </template>
 
 <script setup>
 import { ref } from 'vue';
 import { getTravelListAll } from '@/api/travel';
+import JoinTravelGroupModal from '@/components/modal/JoinTravelGroupModal.vue';
 import { useRouter } from 'vue-router';
+import { useModalStore } from '@/store/modal';
+import { useAuthStore } from '@/store/auth';
+
+const modalStore = useModalStore();
 
 const router = useRouter();
 const travelGroupList = ref([]);
-
+const isShowJoinGroupModal = ref(false);
+const travelGroup = ref('');
 const findTravelList = async () => {
     const res = await getTravelListAll();
-    console.log(res);
     if (res.success) {
         travelGroupList.value = res.response.travelGroupDtoList;
     }
@@ -122,6 +129,20 @@ const findTravelList = async () => {
 
 const goSingleTravelGroup = item => {
     router.push(`/travel/single-group?travelGroupId=${item.travelGroupId}`);
+};
+
+const joinTravelGroup = travelGroupId => {
+    const store = useAuthStore();
+    if (!store.isLogin) {
+        alert('로그인 후 이용가능합니다.');
+        return;
+    }
+    modalStore.toggleJoinGroupModal();
+    modalStore.setTravelGroupId(travelGroupId);
+};
+
+const cancelJoinTravelGroup = () => {
+    modalStore.toggleJoinGroupModal();
 };
 
 findTravelList();
