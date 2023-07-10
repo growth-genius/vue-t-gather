@@ -1,6 +1,6 @@
 import { axiosGet, axiosPatch, axiosPost } from '@/api';
 
-const getTravelList = (travelThemes = '') => {
+const getTravelList = (travelThemes = []) => {
     return axiosGet(`/travel-group/open/group?travelThemes=${travelThemes}`);
 };
 
@@ -16,8 +16,19 @@ const getTravelGroupById = travelGroupId => {
     return axiosGet(`/travel-group/${travelGroupId}`);
 };
 
+/**
+ * 여행테마 전체 조회
+ */
 const getTravelRegisterInit = () => {
-    return axiosGet('/travel-group/group/register/init');
+    return axiosGet('/travel-group/register/init');
+};
+
+/**
+ * 여행테마 검색 전체 조회
+ * @returns {*}
+ */
+const getTravelGroupInit = () => {
+    return axiosGet('/travel-group/open/init');
 };
 
 const modifyTravelGroup = travelGroupId => {
@@ -45,4 +56,5 @@ export {
     modifyTravelGroup,
     getTravelGroupById,
     joinTravelGroup,
+    getTravelGroupInit,
 };

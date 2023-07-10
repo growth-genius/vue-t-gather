@@ -18,10 +18,27 @@
             </div>
         </template>
     </Carousel>
-    <div class="flex"></div>
     <div class="flex justify-content-center">
         <div class="col-3"></div>
         <div class="col-8">
+            <div>
+                <ul class="surface-card p-0 m-0 list-none flex overflow-x-auto select-none">
+                    <li v-for="tab in travelThemes" :key="tab.title" :header="tab.title">
+                        <a
+                            v-ripple
+                            class="cursor-pointer px-4 py-3 flex align-items-center border-bottom-2 hover:border-500 transition-colors transition-duration-150 p-ripple"
+                            :class="{
+                                'border-green-500 text-green-500 hover:border-green-500': tab.default,
+                                'text-700 border-transparent': !tab.default,
+                            }"
+                            :id="`${tab.title}`"
+                            @click="searchTravelGroup(tab)"
+                        >
+                            <span class="font-medium">{{ tab.title }}</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
             <div class="grid">
                 <div class="col-12 md:col-6 lg:col-4 xl:col-3 p-3" v-for="(item, idx) in travelGroupList" :key="idx">
                     <div class="surface-card shadow-2 border-round-3xl p-4">
@@ -50,7 +67,7 @@
                                 "
                                 v-for="(theme, idx) in item.travelThemes"
                                 :key="idx"
-                                >{{ theme }}</span
+                                >{{ theme.title }}</span
                             >
                         </div>
                         <div class="flex py-3 align-items-center">
@@ -102,8 +119,8 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
-import { getTravelListAll } from '@/api/travel';
+import { onMounted, ref } from 'vue';
+import { getTravelGroupInit, getTravelList, getTravelListAll } from '@/api/travel';
 import JoinTravelGroupModal from '@/components/modal/JoinTravelGroupModal.vue';
 import { useRouter } from 'vue-router';
 import { useModalStore } from '@/store/modal';
@@ -112,6 +129,7 @@ import { useAuthStore } from '@/store/auth';
 const modalStore = useModalStore();
 
 const router = useRouter();
+const travelThemes = ref([]);
 const travelGroupList = ref([]);
 const isShowJoinGroupModal = ref(false);
 const travelGroup = ref('');
@@ -119,6 +137,15 @@ const findTravelList = async () => {
     const res = await getTravelListAll();
     if (res.success) {
         travelGroupList.value = res.response.travelGroupDtoList;
+    }
+};
+onMounted(() => {
+    findTravelThemes();
+});
+const findTravelThemes = async () => {
+    const res = await getTravelGroupInit();
+    if (res.success) {
+        travelThemes.value = res.response.travelThemes;
     }
 };
 
@@ -138,6 +165,22 @@ const joinTravelGroup = travelGroupId => {
 
 const cancelJoinTravelGroup = () => {
     modalStore.toggleJoinGroupModal();
+};
+
+const searchTravelGroup = async theme => {
+    const searchTravelThemes = travelThemes.value;
+    for (const tab of searchTravelThemes) {
+        tab.default = theme.title === tab.title;
+    }
+
+    const data = [];
+    if (theme.code !== 'ALL') {
+        data.push(theme.code);
+    }
+    const res = await getTravelList(data);
+    if (res.success) {
+        travelGroupList.value = res.response;
+    }
 };
 
 findTravelList();
