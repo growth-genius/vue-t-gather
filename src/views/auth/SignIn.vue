@@ -62,20 +62,6 @@
                         </div>
                         <Button label="Login" icon="pi pi-user" class="w-full bg-green-500" type="submit"></Button>
                     </form>
-                    <Divider align="center" class="my-6">
-                        <span class="text-600 font-normal text-sm">OR</span>
-                    </Divider>
-                    <Button
-                        label="Sign In with GitHub"
-                        icon="pi pi-github"
-                        class="w-full p-button-secondary bg-black-alpha-90 mb-2"
-                        @click="test"
-                    ></Button>
-                    <Button
-                        label="Sign In with Google"
-                        icon="pi pi-google"
-                        class="w-full p-button-secondary mb-2 bg-blue-500"
-                    ></Button>
                     <div class="mt-6 text-center text-600">
                         Don't have an account?
                         <a tabindex="0" class="font-medium text-blue-500 cursor-pointer" @click="goSignUpPage"
@@ -118,10 +104,6 @@ const authStore = useAuthStore();
 
 const router = useRouter();
 const toast = useToast();
-const test = async () => {
-    const res = await authStore.TEST();
-    console.log(res);
-};
 const login = async isValid => {
     submitted.value = true;
     if (!isValid) {
