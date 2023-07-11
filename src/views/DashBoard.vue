@@ -22,6 +22,24 @@
     <div class="flex justify-content-center">
         <div class="col-3"></div>
         <div class="col-8">
+            <div class="mb-5 mt-3">
+                <ul class="travel-group-tab surface-40 p-0 m-0 list-none flex overflow-x-auto select-none font-bold">
+                    <li v-for="tab in travelThemes" :key="tab.title" :header="tab.title">
+                        <a
+                            v-ripple
+                            class="cursor-pointer px-4 py-3 flex align-items-center border-bottom-2 hover:border-500 transition-colors transition-duration-150 p-ripple"
+                            :class="{
+                                'border-green-500 text-green-500 hover:border-green-500': tab.default,
+                                'text-700 border-transparent': !tab.default,
+                            }"
+                            :id="`${tab.title}`"
+                            @click="searchTravelGroup(tab)"
+                        >
+                            <span class="font-medium">{{ tab.title }}</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
             <div class="grid">
                 <div class="col-12 md:col-6 lg:col-4 xl:col-3 p-3" v-for="(item, idx) in travelGroupList" :key="idx">
                     <div class="surface-card shadow-2 border-round-3xl p-4">
@@ -128,6 +146,11 @@ const findTravelList = async () => {
 };
 
 const goSingleTravelGroup = item => {
+    const store = useAuthStore();
+    if (!store.isLogin) {
+        alert('로그인 후 이용가능합니다.');
+        return;
+    }
     router.push(`/travel/single-group?travelGroupId=${item.travelGroupId}`);
 };
 
@@ -181,5 +204,8 @@ const responsiveOptions = ref([
     word-break: break-all;
     width: 100px;
     height: 20px;
+}
+.travel-group-tab {
+    background-color: #eff3f9;
 }
 </style>
