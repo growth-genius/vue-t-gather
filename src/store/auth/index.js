@@ -19,12 +19,12 @@ export const useAuthStore = defineStore('authStore', {
     actions: {
         async LOGIN(params) {
             const res = await signIn(params);
-            console.log(res);
             if (res.success) {
                 this.accessToken = res.response.accessToken;
                 cookie.cookies.set(process.env.VUE_APP_AUTH_TOKEN, res.response.accessToken);
                 cookie.cookies.set(process.env.VUE_APP_EMAIL, res.response.email);
                 cookie.cookies.set(process.env.VUE_APP_AUTH_REFRESH_TOKEN, res.response.refreshToken);
+                this.account = res.response;
             }
             return res;
         },

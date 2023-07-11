@@ -34,9 +34,7 @@
                         <label for="profileImage" class="profile-button font-bold text-900 text-white">
                             프로필 추가
                         </label>
-                        <div class="align-items-center">
-                            <input type="file" id="profileImage" style="display: none" @change="selectFile($event)" />
-                        </div>
+                        <Button @click="modalStore.toggleProfileImageModal()" label="프로필 추가"></Button>
                     </div>
                     <image-pre-view
                         :pic="pic"
@@ -159,6 +157,7 @@ const v$ = useVuelidate(rules, travelGroup);
     color: white;
     cursor: pointer;
 }
+
 .profile-button:hover {
     background-color: #03d069;
     transition: 0.7s;

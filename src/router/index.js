@@ -30,6 +30,10 @@ const routes = [
                     },
                 ],
             },
+            {
+                path: 'my-page',
+                component: () => import('@/views/mypage/MyPage.vue'),
+            },
         ],
     },
     {

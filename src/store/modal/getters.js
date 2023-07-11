@@ -8,4 +8,7 @@ export default {
     getTravelGroupId(state) {
         return state.travelGroupId;
     },
+    getImageRatio(state) {
+        return state.imageRatio;
+    },
 };
