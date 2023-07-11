@@ -97,10 +97,8 @@ import { helpers, required } from '@vuelidate/validators';
 import { useVuelidate } from '@vuelidate/core';
 import ImagePreView from '@/components/common/ImagePreView.vue';
 import { useModalStore } from '@/store/modal';
-import { useAuthStore } from '@/store/auth';
 
 const useModal = useModalStore();
-const authStore = useAuthStore();
 const user = ref({
     accessToken: '',
     accountId: '',
