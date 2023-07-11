@@ -21,8 +21,8 @@
     <div class="flex justify-content-center">
         <div class="col-3"></div>
         <div class="col-8">
-            <div>
-                <ul class="surface-card p-0 m-0 list-none flex overflow-x-auto select-none">
+            <div class="mb-5 mt-3">
+                <ul class="travel-group-tab surface-40 p-0 m-0 list-none flex overflow-x-auto select-none font-bold">
                     <li v-for="tab in travelThemes" :key="tab.title" :header="tab.title">
                         <a
                             v-ripple
@@ -150,6 +150,11 @@ const findTravelThemes = async () => {
 };
 
 const goSingleTravelGroup = item => {
+    const store = useAuthStore();
+    if (!store.isLogin) {
+        alert('로그인 후 이용가능합니다.');
+        return;
+    }
     router.push(`/travel/single-group?travelGroupId=${item.travelGroupId}`);
 };
 
@@ -219,5 +224,8 @@ const responsiveOptions = ref([
     word-break: break-all;
     width: 100px;
     height: 20px;
+}
+.travel-group-tab {
+    background-color: #eff3f9;
 }
 </style>
