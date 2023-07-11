@@ -16,5 +16,8 @@ export const useModalStore = defineStore('modalStore', {
         setTravelGroupId(travelGroupId) {
             this.travelGroupId = travelGroupId;
         },
+        setImageRatio(ratio) {
+            this.imageRatio = ratio;
+        },
     },
 });

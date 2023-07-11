@@ -1,4 +1,4 @@
-import { axiosGet, axiosPost } from '@/api';
+import { axiosGet, axiosPatch, axiosPost } from '@/api';
 
 // 로그인
 function signIn(data) {
@@ -18,4 +18,8 @@ function getLoginUser() {
     return axiosGet('/account/me');
 }
 
-export { signIn, checkEmailToken, getInit, getLoginUser };
+function modifyUser(accountId, data) {
+    return axiosPatch(`/account/${accountId}`, data);
+}
+
+export { signIn, checkEmailToken, getInit, getLoginUser, modifyUser };
