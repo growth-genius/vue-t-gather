@@ -18,7 +18,6 @@
             </div>
         </template>
     </Carousel>
-
     <div class="flex justify-content-center">
         <div class="col-3"></div>
         <div class="col-8">
@@ -43,20 +42,35 @@
             <div class="grid">
                 <div class="col-12 md:col-6 lg:col-4 xl:col-3 p-3" v-for="(item, idx) in travelGroupList" :key="idx">
                     <div class="surface-card shadow-2 border-round-3xl p-4">
-                        <div class="relative border-bottom-1 surface-border pb-4">
+                        <div class="relative pb-4">
                             <img
                                 :src="`${item.imageUrl ? item.imageUrl : require('@/assets/tgather.png')}`"
                                 :alt="item.groupName"
                                 class="w-full h-full md:h-13rem"
                             />
                             <p
-                                class="absolute px-2 py-1 border-round-lg text-sm text-center text-black mt-0 mb-0 font-bold"
+                                class="px-2 py-1 border-round-lg text-sm text-center text-black mt-0 mb-0 font-bold text-base"
                                 style="background-color: rgba(255, 255, 255, 0.3); left: 13%; right: 10%"
                             >
                                 {{ item.groupName }}
                             </p>
                         </div>
                         <div class="flex border-bottom-1 surface-border py-3">
+                            <span
+                                class="bg-blue-50 text-blue-400 border-round inline-flex py-1 px-2 text-sm mr-2"
+                                :class="
+                                    idx % 3 === 0
+                                        ? 'bg-blue-50 text-blue-400'
+                                        : idx % 2 === 0
+                                        ? 'bg-red-50 text-red-400'
+                                        : 'bg-orange-50 text-orange-400'
+                                "
+                                v-for="(theme, idx) in item.travelThemes"
+                                :key="idx"
+                                >{{ theme }}</span
+                            >
+                        </div>
+                        <div class="flex py-3 align-items-center">
                             <Avatar
                                 v-show="item.travelGroupMemberDtoList[0]"
                                 :key="idx"
@@ -71,32 +85,12 @@
                                 class="mr-3"
                             />
                             <div class="flex flex-column align-items-start">
-                                <div
-                                    class="bg-green-500 text-white font-bold border-round inline-flex py-1 px-2 text-base mr-2"
-                                >
+                                <div class="text-black font-bold border-round inline-flex py-1 px-2 text-base mr-2">
                                     {{ item.travelGroupMemberDtoList[0].nickname }}
-                                </div>
-                                <span class="text-600 font-medium mb-2 my-3 travel-description">{{
-                                    item.description
-                                }}</span>
-                                <div>
-                                    <span
-                                        class="bg-blue-50 text-blue-400 border-round inline-flex py-1 px-2 text-sm mr-2"
-                                        :class="
-                                            idx % 3 === 0
-                                                ? 'bg-blue-50 text-blue-400'
-                                                : idx % 2 === 0
-                                                ? 'bg-red-50 text-red-400'
-                                                : 'bg-orange-50 text-orange-400'
-                                        "
-                                        v-for="(theme, idx) in item.travelThemes"
-                                        :key="idx"
-                                        >{{ theme }}</span
-                                    >
                                 </div>
                             </div>
                         </div>
-                        <div class="flex justify-content-between pt-4">
+                        <div class="flex justify-content-between">
                             <Button
                                 label="자세히"
                                 icon="pi pi-search"
@@ -125,8 +119,8 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
-import { getTravelListAll } from '@/api/travel';
+import { onMounted, ref } from 'vue';
+import { getTravelGroupInit, getTravelList, getTravelListAll } from '@/api/travel';
 import JoinTravelGroupModal from '@/components/modal/JoinTravelGroupModal.vue';
 import { useRouter } from 'vue-router';
 import { useModalStore } from '@/store/modal';
@@ -135,6 +129,7 @@ import { useAuthStore } from '@/store/auth';
 const modalStore = useModalStore();
 
 const router = useRouter();
+const travelThemes = ref([]);
 const travelGroupList = ref([]);
 const isShowJoinGroupModal = ref(false);
 const travelGroup = ref('');
@@ -142,6 +137,15 @@ const findTravelList = async () => {
     const res = await getTravelListAll();
     if (res.success) {
         travelGroupList.value = res.response.travelGroupDtoList;
+    }
+};
+onMounted(() => {
+    findTravelThemes();
+});
+const findTravelThemes = async () => {
+    const res = await getTravelGroupInit();
+    if (res.success) {
+        travelThemes.value = res.response.travelThemes;
     }
 };
 
@@ -166,6 +170,22 @@ const joinTravelGroup = travelGroupId => {
 
 const cancelJoinTravelGroup = () => {
     modalStore.toggleJoinGroupModal();
+};
+
+const searchTravelGroup = async theme => {
+    const searchTravelThemes = travelThemes.value;
+    for (const tab of searchTravelThemes) {
+        tab.default = theme.title === tab.title;
+    }
+
+    const data = [];
+    if (theme.code !== 'ALL') {
+        data.push(theme.code);
+    }
+    const res = await getTravelList(data);
+    if (res.success) {
+        travelGroupList.value = res.response;
+    }
 };
 
 findTravelList();
