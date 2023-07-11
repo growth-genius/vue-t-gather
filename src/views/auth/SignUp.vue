@@ -7,25 +7,17 @@
             <div class="w-full lg:w-6 p-4 lg:p-7 surface-card">
                 <div class="text-900 text-2xl font-medium mb-6 text-center">SignUp</div>
                 <form @submit.prevent="signUpAccount(!v$.$invalid)">
-                    <section v-if="result.dataURL && result.blobURL" class="section q-mx-lg">
-                        <div class="preview">
-                            <img :src="result.dataURL" alt="" style="min-width: 100%" />
-                        </div>
+                    <section v-if="state.profileImage" class="section q-mx-lg">
+                        <Avatar :image="state.profileImage" class="mr-2" shape="circle" size="xlarge" />
                     </section>
                     <div class="flex justify-content-center text-center mb-3">
-                        <label for="profileImage" class="profile-button font-bold text-900 text-white">
-                            프로필 추가
-                        </label>
-                        <div class="align-items-center">
-                            <input type="file" id="profileImage" style="display: none" @change="selectFile($event)" />
-                        </div>
+                        <Button @click="modalStore.toggleProfileImageModal()" label="프로필 추가"></Button>
                     </div>
                     <image-pre-view
-                        :pic="pic"
                         :isShowModal="isShowModal"
-                        @cancel:pic="cancelThumbnail"
                         @update:pic="updatePic"
                         class="buttonColorGreen"
+                        :ratio="1"
                     />
                     <div>
                         <label
@@ -34,14 +26,14 @@
                             :class="{ 'p-error': v$.email.$invalid && submitted }"
                             >이메일</label
                         >
-                        <div class="flex align-items-center text-center inline-block">
+                        <div class="flex align-items-center inline-block">
                             <InputText
                                 id="email"
                                 v-model="v$.email.$model"
                                 :class="{ 'p-invalid': v$.email.$invalid && submitted }"
                                 type="text"
                                 placeholder="Email address"
-                                class="w-7 mb-4"
+                                class="w-7 mr-2"
                             />
                             <Button
                                 label="확인"
@@ -69,7 +61,7 @@
                                 :class="{ 'p-invalid': v$.nickname.$invalid && submitted }"
                                 type="text"
                                 placeholder="nickname"
-                                class="w-7 mb-4"
+                                class="w-7 mr-2"
                             />
                             <Button
                                 label="확인"
@@ -91,15 +83,15 @@
 <script setup>
 import { useVuelidate } from '@vuelidate/core';
 import { email, helpers, required } from '@vuelidate/validators';
-import { reactive, ref } from 'vue';
+import { ref } from 'vue';
 import { checkEmail, checkNickname, signUp } from '@/api/auth';
 import router from '@/router';
 import ImagePreView from '@/components/common/ImagePreView.vue';
+import { useModalStore } from '@/store/modal';
+
+const modalStore = useModalStore();
 
 const isShowModal = ref(false);
-const uploadInput = ref(null);
-const pic = ref('');
-const imageFile = ref(null);
 const submitted = ref(false);
 
 const rules = {
@@ -115,45 +107,13 @@ const state = ref({
     email: '',
     password: '',
     nickname: '',
+    profileImage: '',
     travelThemes: [],
     confirmPassword: '',
 });
 
-const result = reactive({
-    dataURL: '',
-    blobURL: '',
-});
-
-const selectFile = event => {
-    const file = event.target.files[0];
-    // Reset last selection and results
-    pic.value = '';
-    result.dataURL = '';
-    result.blobURL = '';
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onload = () => {
-        // Update the picture source of the `img` prop
-        pic.value = String(reader.result);
-        console.log(pic.value);
-        // Show the modal
-        isShowModal.value = true;
-        // Clear selected files of input element
-        if (!uploadInput.value) return;
-        uploadInput.value.value = '';
-    };
-};
-
-const updatePic = (dataUrl, blob) => {
-    result.dataURL = dataUrl;
-    result.blobURL = blob;
-    isShowModal.value = false;
-};
-const cancelThumbnail = () => {
-    result.dataURL = '';
-    result.blobURL = '';
-    imageFile.value = null;
-    isShowModal.value = false;
+const updatePic = dataUrl => {
+    state.value.profileImage = dataUrl;
 };
 
 const v$ = useVuelidate(rules, state);
@@ -214,6 +174,7 @@ const signUpAccount = async isValid => {
     background-color: #03d069;
     transition: 0.7s;
 }
+
 .profile-button {
     padding: 6px 25px;
     background-color: #03d069;
@@ -221,6 +182,7 @@ const signUpAccount = async isValid => {
     color: white;
     cursor: pointer;
 }
+
 label:hover {
     .profile-button {
         background-color: #03d069;

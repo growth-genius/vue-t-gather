@@ -25,24 +25,15 @@
                     </div>
                 </template>
                 <template #content>
-                    <section v-if="result.dataURL && result.blobURL" class="section q-mx-lg">
+                    <section v-if="travelGroup.profileImage" class="section q-mx-lg">
                         <div class="preview">
-                            <img :src="result.dataURL" alt="" style="min-width: 100%" />
+                            <img :src="travelGroup.profileImage" alt="" style="min-width: 100%" />
                         </div>
                     </section>
                     <div class="flex justify-content-center text-center mb-3">
-                        <label for="profileImage" class="profile-button font-bold text-900 text-white">
-                            프로필 추가
-                        </label>
                         <Button @click="modalStore.toggleProfileImageModal()" label="프로필 추가"></Button>
                     </div>
-                    <image-pre-view
-                        :pic="pic"
-                        :isShowModal="isShowModal"
-                        @cancel:pic="cancelThumbnail"
-                        @update:pic="updatePic"
-                        class="buttonColorGreen"
-                    />
+                    <image-pre-view @update:pic="updatePic" class="buttonColorGreen" />
                     <label for="nickname"> 닉네임 : </label>
                     <input-text
                         id="nickname"
@@ -71,32 +62,15 @@ import ImagePreView from '@/components/common/ImagePreView.vue';
 import { joinTravelGroup } from '@/api/travel';
 
 const modalStore = useModalStore();
-const isShowModal = ref(false);
-const pic = ref('');
-const imageFile = ref(null);
 const submitted = ref(false);
-
-const result = reactive({
-    dataURL: '',
-    blobURL: '',
-});
 
 const travelGroup = reactive({ profileImage: '', nickname: '' });
 
-const updatePic = (dataUrl, blob) => {
-    result.dataURL = dataUrl;
-    result.blobURL = blob;
-    isShowModal.value = false;
-};
-const cancelThumbnail = () => {
-    result.dataURL = '';
-    result.blobURL = '';
-    imageFile.value = null;
-    isShowModal.value = false;
+const updatePic = dataUrl => {
+    travelGroup.profileImage = dataUrl;
 };
 const cancelJoinTravelGroup = () => {
     emits('cancel:travelGroup');
-    cancelThumbnail();
     cancelTravelGroup();
 };
 
@@ -111,21 +85,21 @@ const requestJoinTravelGroup = async isValid => {
     if (!isValid) {
         return;
     }
-    travelGroup.profileImage = pic.value;
     const res = await joinTravelGroup(travelGroupId, travelGroup);
     if (res.success) {
         alert('여행그룹에 성공적으로 가입했습니다.');
         cancelJoinTravelGroup();
     } else {
         alert(res.message);
-        cancelThumbnail();
         cancelTravelGroup();
     }
 };
 
 const emits = defineEmits(['update:travelGroup', 'cancel:travelGroup']);
 const rules = {
-    nickname: { required: helpers.withMessage('닉네임을 입력해 주세요.', required) },
+    nickname: {
+        required: helpers.withMessage('닉네임을 입력해 주세요.', required),
+    },
 };
 const v$ = useVuelidate(rules, travelGroup);
 </script>

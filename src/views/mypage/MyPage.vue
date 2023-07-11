@@ -126,7 +126,6 @@ const rules = {
 const $v = useVuelidate(rules, user);
 const getLoggedInUser = async () => {
     const res = await getLoginUser();
-    console.log(res);
     if (res.success) {
         user.value = res.response.accountDto;
         travelThemes.value = res.response.travelThemes;
