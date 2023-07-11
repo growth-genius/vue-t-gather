@@ -72,7 +72,6 @@ import { joinTravelGroup } from '@/api/travel';
 
 const modalStore = useModalStore();
 const isShowModal = ref(false);
-const uploadInput = ref(null);
 const pic = ref('');
 const imageFile = ref(null);
 const submitted = ref(false);
@@ -83,25 +82,6 @@ const result = reactive({
 });
 
 const travelGroup = reactive({ profileImage: '', nickname: '' });
-
-const selectFile = event => {
-    const file = event.target.files[0];
-    // Reset last selection and results
-    pic.value = '';
-    result.dataURL = '';
-    result.blobURL = '';
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onload = () => {
-        // Update the picture source of the `img` prop
-        pic.value = String(reader.result);
-        // Show the modal
-        isShowModal.value = true;
-        // Clear selected files of input element
-        if (!uploadInput.value) return;
-        uploadInput.value.value = '';
-    };
-};
 
 const updatePic = (dataUrl, blob) => {
     result.dataURL = dataUrl;
