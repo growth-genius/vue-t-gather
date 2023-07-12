@@ -6,7 +6,10 @@ node {
         }
 
         stage("Docker Image Delete") {
-            sh(script: "docker rmi ${IMAGE_NAME} || true")
+            sh(script: "docker stop ${IMAGE_NAME}:latest || true")
+            sh(script: "docker rm ${IMAGE_NAME}:latest || true")
+            sh(script: "docker rmi ${IMAGE_NAME}:latest || true")
+
         }
 
         stage("Docker Image build") {
@@ -14,7 +17,7 @@ node {
         }
 
         stage("Docker Image tag") {
-            sh(script: "docker run -d --name ${IMAGE_NAME} -p 3000:3000 -v /app/node_modules -v /app:/app ${IMAGE_NAME}")
+            sh(script: "docker run -d --name ${IMAGE_NAME}:latest -p 3000:3000 -v /app/node_modules -v /app:/app ${IMAGE_NAME}:latest")
         }
 
     }catch(e) {
