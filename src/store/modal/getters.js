@@ -5,6 +5,9 @@ export default {
     isShowProfileImageModal(state) {
         return state.showProfileImageModal;
     },
+    isShowEmailAuthCodeModal(state) {
+        return state.showEmailAuthCodeModal;
+    },
     getTravelGroupId(state) {
         return state.travelGroupId;
     },

@@ -72,6 +72,10 @@
             </div>
         </div>
     </div>
+    <valid-email-auth-code-modal
+        @cancel:auth-code="cancelEmailAuthCode"
+        :isShowEmailAuthCodeModal="isShowEmailAuthCodeModal"
+    />
 </template>
 
 <script setup>
@@ -81,8 +85,12 @@ import { ref } from 'vue';
 import { useAuthStore } from '@/store/auth';
 import { useRouter } from 'vue-router';
 import { useToast } from 'primevue/usetoast';
+import { useModalStore } from '@/store/modal';
+import ValidEmailAuthCodeModal from '@/components/modal/ValidEmailAuthCodeModal.vue';
 
+const modalStore = useModalStore();
 const submitted = ref(false);
+const isShowEmailAuthCodeModal = ref(false);
 const rules = {
     email: {
         required: helpers.withMessage('이메일을 입력해 주세요.', required),
@@ -115,6 +123,10 @@ const login = async isValid => {
     if (res.success) {
         await router.push('/');
     } else {
+        if (res.status === 400) {
+            console.log('test');
+            modalStore.toggleEmailAuthCodeModal();
+        }
         await toast.add({
             group: 'block',
             summary: '로그인 실패',
@@ -123,6 +135,10 @@ const login = async isValid => {
             life: 3000,
         });
     }
+};
+
+const cancelEmailAuthCode = () => {
+    modalStore.toggleEmailAuthCodeModal();
 };
 </script>
 <style scoped>
