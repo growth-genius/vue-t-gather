@@ -5,13 +5,21 @@
     >
         <div class="flex w-full h-full align-items-center justify-content-center">
             <div class="w-full lg:w-6 p-4 lg:p-7 surface-card">
-                <div class="text-900 text-2xl font-medium mb-6 text-center">SignUp</div>
+                <div class="text-900 text-2xl font-medium mb-6 text-center">회원가입</div>
                 <form @submit.prevent="signUpAccount(!v$.$invalid)">
-                    <section v-if="state.profileImage" class="section q-mx-lg">
-                        <Avatar :image="state.profileImage" class="mr-2" shape="circle" size="xlarge" />
-                    </section>
                     <div class="flex justify-content-center text-center mb-3">
-                        <Button @click="modalStore.toggleProfileImageModal()" label="프로필 추가"></Button>
+                        <section v-if="state.profileImage" class="section q-mx-lg">
+                            <Avatar :image="state.profileImage" class="mr-2" shape="circle" size="xlarge" />
+                        </section>
+                    </div>
+                    <div class="flex justify-content-center text-center mb-3">
+                        <div>
+                            <Button
+                                @click="modalStore.toggleProfileImageModal()"
+                                label="프로필 추가"
+                                style="background-color: #03d069"
+                            ></Button>
+                        </div>
                     </div>
                     <image-pre-view
                         :isShowModal="isShowModal"
@@ -70,11 +78,46 @@
                             />
                         </div>
                     </div>
+                    <div>
+                        <label for="birth" class="block text-900 font-medium mt-3 mb-2">생년월일</label>
+                        <div class="flex align-items-center text-center inline-block">
+                            <InputText
+                                id="nickname"
+                                v-model="v$.birth.$model"
+                                :class="{ 'p-invalid': v$.birth.$invalid && submitted }"
+                                type="text"
+                                placeholder="YYYYmmdd"
+                                class="w-7 mr-2"
+                            />
+                        </div>
+                    </div>
                     <label for="travelThemes" class="block text-900 font-medium mt-3 mb-2">관심있는 테마</label>
-
-                    <label for="password3" class="block text-900 font-medium mt-3 mb-2">비밀번호</label>
-                    <InputText id="password3" type="password" placeholder="Password" class="w-full mb-4" />
-                    <Button label="회원가입" icon="pi pi-user" class="w-full buttonColorGreen" />
+                    <SelectButton
+                        v-model="state.travelThemes.code"
+                        :options="travelThemes"
+                        optionLabel="title"
+                        multiple
+                        aria-labelledby="multiple"
+                    />
+                    <label for="password" class="block text-900 font-medium mt-3 mb-2">비밀번호</label>
+                    <InputText
+                        id="password"
+                        v-model="v$.password.$model"
+                        :class="{ 'p-invalid': v$.password.$invalid && submitted }"
+                        type="password"
+                        placeholder="Password"
+                        class="w-full mb-4"
+                    />
+                    <label for="rePassword" class="block text-900 font-medium mt-3 mb-2">비밀번호 재입력</label>
+                    <InputText
+                        id="rePassword"
+                        v-model="v$.rePassword.$model"
+                        :class="{ 'p-invalid': v$.rePassword.$invalid && submitted }"
+                        type="rePassword"
+                        placeholder="re-password"
+                        class="w-full mb-4"
+                    />
+                    <Button label="회원가입" icon="pi pi-user" class="w-full buttonColorGreen" type="submit" />
                 </form>
             </div>
         </div>
@@ -83,16 +126,30 @@
 <script setup>
 import { useVuelidate } from '@vuelidate/core';
 import { email, helpers, required } from '@vuelidate/validators';
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import { checkEmail, checkNickname, signUp } from '@/api/auth';
-import router from '@/router';
 import ImagePreView from '@/components/common/ImagePreView.vue';
 import { useModalStore } from '@/store/modal';
+import { useRouter } from 'vue-router';
+import { getTravelGroupInit } from '@/api/travel';
 
 const modalStore = useModalStore();
-
+const router = useRouter();
+const travelThemes = ref([]);
 const isShowModal = ref(false);
 const submitted = ref(false);
+const isAuthEmail = ref(false);
+const isAuthNickname = ref(false);
+
+onMounted(() => {
+    findTravelThemes();
+});
+const findTravelThemes = async () => {
+    const res = await getTravelGroupInit();
+    if (res.success) {
+        travelThemes.value = res.response.travelThemes;
+    }
+};
 
 const rules = {
     email: {
@@ -101,12 +158,16 @@ const rules = {
     },
     nickname: { required: helpers.withMessage('닉네임을 입력해 주세요.', required) },
     password: { required: helpers.withMessage('비밀번호를 입력해 주세요.', required) },
+    rePassword: { required: helpers.withMessage('비밀번호를 다시 입력해 주세요.', required) },
+    birth: { required: helpers.withMessage('생년월일을 입력해 주세요.', required) },
 };
 
 const state = ref({
     email: '',
     password: '',
+    rePassword: '',
     nickname: '',
+    birth: '',
     profileImage: '',
     travelThemes: [],
     confirmPassword: '',
@@ -124,6 +185,7 @@ const authNickname = async nickname => {
         const validNickname = res.response;
         if (!validNickname) {
             alert('사용가능한 닉네임입니다.');
+            isAuthNickname.value = true;
         } else {
             alert('사용할 수 없습니다. 다른 닉네임을 입력해주세요.');
             state.value.nickname = '';
@@ -139,6 +201,7 @@ const authEmail = async email => {
         const validEmail = res.response;
         if (!validEmail) {
             alert('사용가능한 이메일입니다.');
+            isAuthEmail.value = true;
         } else {
             alert('이미 가입한 이메일입니다. 다른 이메일을 입력해주세요.');
             state.value.email = '';
@@ -150,7 +213,16 @@ const authEmail = async email => {
 
 const signUpAccount = async isValid => {
     submitted.value = true;
+    console.log(state.value.travelThemes);
     if (!isValid) {
+        return;
+    }
+    if (!isAuthEmail.value) {
+        alert('이메일 인증이 필요합니다.');
+        return;
+    }
+    if (!isAuthNickname.value) {
+        alert('닉네임 인증이 필요합니다.');
         return;
     }
     const res = await signUp(state.value);

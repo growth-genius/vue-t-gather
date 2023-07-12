@@ -12,7 +12,7 @@
                     <img :src="require('@/assets/tgather_signin_logo.png')" alt="signIn" class="logo_image" />
                 </div>
                 <div class="w-full lg:w-6 p-4 lg:p-7 surface-card">
-                    <div class="text-900 text-2xl font-medium mb-6">Login</div>
+                    <div class="text-900 text-2xl font-medium mb-6">로그인</div>
                     <form @submit.prevent="login(!v$.$invalid)">
                         <div class="field">
                             <div class="p-float-label p-input-icon-right w-full">
@@ -62,29 +62,20 @@
                         </div>
                         <Button label="Login" icon="pi pi-user" class="w-full bg-green-500" type="submit"></Button>
                     </form>
-                    <Divider align="center" class="my-6">
-                        <span class="text-600 font-normal text-sm">OR</span>
-                    </Divider>
-                    <Button
-                        label="Sign In with GitHub"
-                        icon="pi pi-github"
-                        class="w-full p-button-secondary bg-black-alpha-90 mb-2"
-                    ></Button>
-                    <Button
-                        label="Sign In with Google"
-                        icon="pi pi-google"
-                        class="w-full p-button-secondary mb-2 bg-blue-500"
-                    ></Button>
                     <div class="mt-6 text-center text-600">
-                        Don't have an account?
+                        계정이 없으신가요?
                         <a tabindex="0" class="font-medium text-blue-500 cursor-pointer" @click="goSignUpPage"
-                            >Sign up</a
+                            >회원가입</a
                         >
                     </div>
                 </div>
             </div>
         </div>
     </div>
+    <valid-email-auth-code-modal
+        @cancel:auth-code="cancelEmailAuthCode"
+        :isShowEmailAuthCodeModal="isShowEmailAuthCodeModal"
+    />
 </template>
 
 <script setup>
@@ -94,8 +85,12 @@ import { ref } from 'vue';
 import { useAuthStore } from '@/store/auth';
 import { useRouter } from 'vue-router';
 import { useToast } from 'primevue/usetoast';
+import { useModalStore } from '@/store/modal';
+import ValidEmailAuthCodeModal from '@/components/modal/ValidEmailAuthCodeModal.vue';
 
+const modalStore = useModalStore();
 const submitted = ref(false);
+const isShowEmailAuthCodeModal = ref(false);
 const rules = {
     email: {
         required: helpers.withMessage('이메일을 입력해 주세요.', required),
@@ -128,6 +123,10 @@ const login = async isValid => {
     if (res.success) {
         await router.push('/');
     } else {
+        if (res.status === 400) {
+            console.log('test');
+            modalStore.toggleEmailAuthCodeModal();
+        }
         await toast.add({
             group: 'block',
             summary: '로그인 실패',
@@ -136,6 +135,10 @@ const login = async isValid => {
             life: 3000,
         });
     }
+};
+
+const cancelEmailAuthCode = () => {
+    modalStore.toggleEmailAuthCodeModal();
 };
 </script>
 <style scoped>

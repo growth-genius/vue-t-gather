@@ -13,6 +13,9 @@ export const useModalStore = defineStore('modalStore', {
         toggleProfileImageModal() {
             this.showProfileImageModal = !this.showProfileImageModal;
         },
+        toggleEmailAuthCodeModal() {
+            this.showEmailAuthCodeModal = !this.showEmailAuthCodeModal;
+        },
         setTravelGroupId(travelGroupId) {
             this.travelGroupId = travelGroupId;
         },

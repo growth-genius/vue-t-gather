@@ -33,4 +33,9 @@ function checkEmail(email) {
     return axiosGet(`/account/auth/check-email/${email}`);
 }
 
-export { signIn, checkEmailToken, getLoginUser, modifyUser, checkEmail, checkNickname, signUp };
+// 이메일 인증코드 인증
+function validAuthCode(data) {
+    return axiosPost('/account/auth/confirm-authcode', data);
+}
+
+export { signIn, checkEmailToken, getLoginUser, modifyUser, checkEmail, checkNickname, signUp, validAuthCode };
