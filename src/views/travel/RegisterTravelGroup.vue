@@ -39,23 +39,36 @@
                                 <img :src="result.dataURL" alt="" style="min-width: 100%" />
                             </div>
                         </section>
-                        <div class="field mb-4 col-12" style="width: 50%">
-                            <label for="avatar" class="font-medium text-900">배너</label>
+                        <div class="flex align-items-center mb-3">
+                            <div class="flex-or">
+                                <label for="imageFile" class="font-medium text-900">대표사진</label>
 
-                            <div class="flex align-items-center">
-                                <input type="file" @change="selectFile($event)" />
+                                <img
+                                    :src="v$.groupName.$model ? v$.groupName.$model : require('@/assets/tgather.png')"
+                                    class="w-16rem w-4rem"
+                                />
+                                <Button
+                                    type="button"
+                                    class="justify-content-center text-center"
+                                    @click="useModal.toggleProfileImageModal()"
+                                    >업로드</Button
+                                >
                             </div>
+                            <div class="col-3" />
+                            <image-pre-view @update:pic="updatePic" ratio="16/9" />
                         </div>
-                        <image-pre-view
-                            :pic="pic"
-                            :isShowModal="isShowModal"
-                            @cancel:pic="cancelThumbnail"
-                            @update:pic="updatePic"
-                        />
                         <div class="field mb-4 col-12">
                             <label for="startDate" class="font-medium text-900">시작일자</label>
                             <Calendar v-model="travelGroup.startDate" dateFormat="yy-mm-dd" input-id="startDate" />
                         </div>
+                        <label for="travelThemes" class="block text-900 font-medium mt-3 mb-2">여행 테마</label>
+                        <SelectButton
+                            v-model="travelGroup.travelThemes.code"
+                            :options="travelThemes"
+                            optionLabel="title"
+                            multiple
+                            aria-labelledby="multiple"
+                        />
                         <div class="field mb-4 col-12 flex align-items-center">
                             <label for="limitedParticipant" class="font-medium text-900 mr-5">
                                 참가자 수 제한 여부
@@ -64,7 +77,8 @@
                         </div>
                         <div class="field field mb-4 col-12" v-show="v$.limitedParticipant.$model">
                             <div class="w-full">
-                                <label for="participantCount" class="font-medium text-900">참가자 제한 수</label>
+                                <label for="participantCount" class="font-medium w-2 text-900">참가자 제한 수</label>
+
                                 <InputNumber
                                     v-model="v$.limitParticipantCount.$model"
                                     :class="{ 'p-invalid': v$.limitParticipantCount.$invalid && submitted }"
@@ -83,7 +97,7 @@
                         </div>
 
                         <div class="field mb-4 col-12 flex align-items-center">
-                            <label for="open" class="font-medium text-900 mr-5">공개 여부</label>
+                            <label for="open" class="font-medium w-2 text-900 mr-5">공개 여부</label>
                             <InputSwitch v-model="v$.open.$model" input-id="open" />
                         </div>
                         <div class="col-12 flex justify-content-center mt-5">
@@ -99,32 +113,42 @@
 <script setup>
 import { onMounted, reactive, ref } from 'vue';
 import ImagePreView from '@/components/common/ImagePreView.vue';
-import { getTravelRegisterInit, saveTravelGroup } from '@/api/travel';
+import { getTravelGroupInit, getTravelRegisterInit, saveTravelGroup } from '@/api/travel';
 import { useVuelidate } from '@vuelidate/core';
 import { helpers, maxValue, minValue, required } from '@vuelidate/validators';
 
 onMounted(() => {
     getInit();
+    findTravelThemes();
 });
+const travelThemes = ref([]);
+
 const getInit = async () => {
     const res = await getTravelRegisterInit();
     if (res.success) {
         travelThemes.value = res.response.travelThemes;
     }
 };
-const travelThemes = ref([]);
+
+const findTravelThemes = async () => {
+    const res = await getTravelGroupInit();
+    if (res.success) {
+        travelThemes.value = res.response.travelThemes;
+    }
+};
 
 const isShowModal = ref(false);
 
 const travelGroup = ref({
     groupName: '',
     travelThemes: [],
+    description: '',
+    imageUrl: '',
     startDate: new Date(),
     limitParticipantCount: 1,
     limitedParticipant: false,
     open: true,
 });
-const imageFile = ref(null);
 
 const rules = {
     groupName: { required: helpers.withMessage('그룹 명을 입력해 주세요.', required) },
@@ -147,9 +171,6 @@ const updatePic = (dataUrl, blob) => {
     isShowModal.value = false;
 };
 
-const uploadInput = ref(null);
-const pic = ref('');
-
 const result = reactive({
     dataURL: '',
     blobURL: '',
@@ -157,33 +178,6 @@ const result = reactive({
 /**
  * Select the picture to be cropped
  */
-
-const selectFile = event => {
-    const file = event.target.files[0];
-    // Reset last selection and results
-    pic.value = '';
-    result.dataURL = '';
-    result.blobURL = '';
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onload = () => {
-        // Update the picture source of the `img` prop
-        pic.value = String(reader.result);
-        console.log(pic.value);
-        // Show the modal
-        isShowModal.value = true;
-        // Clear selected files of input element
-        if (!uploadInput.value) return;
-        uploadInput.value.value = '';
-    };
-};
-
-const cancelThumbnail = () => {
-    result.dataURL = '';
-    result.blobURL = '';
-    imageFile.value = null;
-    isShowModal.value = false;
-};
 
 const saveGroup = async isValid => {
     submitted.value = true;
@@ -195,4 +189,13 @@ const saveGroup = async isValid => {
 };
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.buttonColorGreen {
+    background-color: #03d069;
+}
+
+.buttonColorGreen:hover {
+    background-color: #03d069;
+    transition: 0.7s;
+}
+</style>
