@@ -48,12 +48,12 @@
                         v-ripple
                         class="flex p-3 lg:px-3 lg:py-2 align-items-center hover:surface-100 font-medium border-round cursor-pointer transition-duration-150 transition-colors p-ripple"
                     >
-                        <img
-                            src="images/blocks/avatars/circle/avatar-f-1.png"
-                            class="mr-3 lg:mr-0"
-                            style="width: 32px; height: 32px"
-                            alt=""
+                        <Avatar
+                            :image="getProfileImage ? getProfileImage : require('@/assets/images/avatar/user.png')"
+                            class="mr-2"
+                            shape="circle"
                         />
+
                         <div class="block lg:hidden">
                             <div class="text-900 font-medium">Josephine Lillard</div>
                             <span class="text-600 font-medium text-sm">Marketing Specialist</span>
@@ -76,9 +76,11 @@ import router from '@/router';
 import { useAuthStore } from '@/store/auth';
 import { storeToRefs } from 'pinia';
 
-const { isLogin } = storeToRefs(useAuthStore());
+const { isLogin, getProfileImage } = storeToRefs(useAuthStore());
 
 const { LOGOUT } = useAuthStore();
+
+console.log(getProfileImage);
 const goCreateGroupPage = () => {
     router.push('/travel/register-group');
 };
@@ -89,6 +91,9 @@ const goDashBoard = () => {
 const items = ref([
     {
         icon: 'pi pi-info',
+        command: async () => {
+            router.push('/my-page');
+        },
         label: '내 프로필',
     },
     {

@@ -62,8 +62,8 @@ function setInterceptors(instance) {
 
                         await instance
                             .patch(`${process.env.VUE_APP_API_URL}/api/account/auth/refresh-token`, { refreshToken })
-                            .then(({ data }) => {
-                                const { accessToken: newAccessToken, refreshToken: newRefreshToken } = data;
+                            .then(({ response }) => {
+                                const { accessToken: newAccessToken, refreshToken: newRefreshToken } = response;
                                 saveCookie(process.env.VUE_APP_AUTH_TOKEN, newAccessToken);
                                 saveCookie(process.env.VUE_APP_AUTH_REFRESH_TOKEN, newRefreshToken);
                                 isTokenRefreshing = false;

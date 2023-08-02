@@ -1,4 +1,4 @@
-import { axiosGet, axiosPost } from '@/api';
+import { axiosGet, axiosPatch, axiosPost } from '@/api';
 
 // 로그인
 function signIn(data) {
@@ -10,8 +10,32 @@ function checkEmailToken(token, email) {
     return axiosGet(`/account/auth/check-email-token/${token}/${email}`);
 }
 
-function getInit() {
-    return axiosGet('/account/login-form');
+function getLoginUser() {
+    return axiosGet('/account/me');
 }
 
-export { signIn, checkEmailToken, getInit };
+function modifyUser(accountId, data) {
+    return axiosPatch(`/account/${accountId}`, data);
+}
+
+// 회원가입
+function signUp(data) {
+    return axiosPost('/account/auth/sign-up', data);
+}
+
+// 닉네임 유효 값 인증
+function checkNickname(nickname) {
+    return axiosGet(`/account/auth/check-nickname/${nickname}`);
+}
+
+// 이메일 유효 값 인증
+function checkEmail(email) {
+    return axiosGet(`/account/auth/check-email/${email}`);
+}
+
+// 이메일 인증코드 인증
+function validAuthCode(data) {
+    return axiosPost('/account/auth/confirm-authcode', data);
+}
+
+export { signIn, checkEmailToken, getLoginUser, modifyUser, checkEmail, checkNickname, signUp, validAuthCode };

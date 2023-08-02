@@ -5,4 +5,5 @@ export default {
     getEmail: state => state.email,
     getUserName: state => state.userName,
     isSuperAdmin: state => state.superAdmin,
+    getProfileImage: state => state.account.profileImage,
 };

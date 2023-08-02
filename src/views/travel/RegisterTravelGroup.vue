@@ -10,18 +10,15 @@
             <div class="col-12 lg:col-10">
                 <form @submit.prevent="saveGroup(!v$.$invalid)">
                     <div class="grid formgrid p-fluid">
-                        <div class="field field mb-4 col-12">
+                        <div class="field mb-4 col-12">
                             <div class="p-float-label w-full">
                                 <input-text
                                     id="groupName"
                                     v-model="v$.groupName.$model"
                                     class="w-full"
                                     :class="{ 'p-invalid': v$.groupName.$invalid && submitted }"
-                                    aria-describedby="email-error"
                                 />
-                                <label for="groupName" :class="{ 'p-error': v$.groupName.$invalid && submitted }">
-                                    그룹명
-                                </label>
+                                <label for="groupName"> 그룹명 </label>
                             </div>
                             <span v-if="v$.groupName.$error && submitted">
                                 <span id="email-error" v-for="(error, index) of v$.groupName.$errors" :key="index">
@@ -34,60 +31,86 @@
                                 >그룹 명을 입력해 주세요</small
                             >
                         </div>
-                        <section v-if="result.dataURL && result.blobURL" class="section q-mx-lg">
+                        <section class="section q-mx-lg">
                             <div class="preview">
-                                <img :src="result.dataURL" alt="" style="min-width: 100%" />
+                                <img
+                                    :src="travelGroup.imageUrl ? travelGroup.imageUrl : require('@/assets/tgather.png')"
+                                    class="w-16rem w-4rem"
+                                />
+                                <Button
+                                    type="button"
+                                    class="justify-content-center text-center"
+                                    @click="modalStore.toggleProfileImageModal()"
+                                    >업로드</Button
+                                >
                             </div>
                         </section>
-                        <div class="field mb-4 col-12" style="width: 50%">
-                            <label for="avatar" class="font-medium text-900">배너</label>
+                        <image-pre-view @update:pic="updatePic" class="buttonColorGreen" :ratio="16 / 9" />
 
-                            <div class="flex align-items-center">
-                                <input type="file" @change="selectFile($event)" />
-                            </div>
+                        <div class="field mb-4 col-12">
+                            <label for="description" class="font-medium text-90 mt-3">그룹 소개</label>
+                            <textarea id="description" v-model="travelGroup.description" class="w-full"> </textarea>
                         </div>
-                        <image-pre-view
-                            :pic="pic"
-                            :isShowModal="isShowModal"
-                            @cancel:pic="cancelThumbnail"
-                            @update:pic="updatePic"
-                        />
                         <div class="field mb-4 col-12">
                             <label for="startDate" class="font-medium text-900">시작일자</label>
                             <Calendar v-model="travelGroup.startDate" dateFormat="yy-mm-dd" input-id="startDate" />
                         </div>
+                        <div class="mb-5">
+                            <label for="travelThemes" class="block text-900 font-medium mt-3 mb-2">여행 테마</label>
+                            <SelectButton
+                                v-model="v$.travelThemes.$model"
+                                :options="travelThemes"
+                                optionLabel="title"
+                                multiple
+                                aria-labelledby="multiple"
+                            />
+                        </div>
+                        <span v-if="v$.travelThemes.$error && submitted">
+                            <span id="email-error" v-for="(error, index) of v$.travelThemes.$errors" :key="index">
+                                <small class="p-error">{{ error.$message }}</small>
+                            </span>
+                        </span>
+                        <small
+                            v-else-if="(v$.travelThemes.$invalid && submitted) || v$.travelThemes.$pending.$response"
+                            class="p-error"
+                            >여행 테마를 하나 이상 선택해 주세요.</small
+                        >
                         <div class="field mb-4 col-12 flex align-items-center">
-                            <label for="limitedParticipant" class="font-medium text-900 mr-5">
+                            <label for="limitedAge" class="font-medium w-2 text-900 mr-5">
+                                참가자 나이 제한 여부
+                            </label>
+                            <InputSwitch v-model="travelGroup.limitedAge" input-id="limitedAge" />
+                        </div>
+                        <div class="field mb-4 col-12" v-show="travelGroup.limitedAge">
+                            <div class="w-full">
+                                <label for="limitAgeRangeStart" class="font-medium w-2 text-900">나이 제한 범위</label>
+                                <div class="card flex justify-content-center justify-content-center">
+                                    <div class="w-14rem">
+                                        <InputText v-model.number="limitAgeRange" />
+                                        <Slider v-model="limitAgeRange" range />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="field mb-4 col-12 flex align-items-center">
+                            <label for="limitedParticipant" class="font-medium w-2 text-900 mr-5">
                                 참가자 수 제한 여부
                             </label>
-                            <InputSwitch v-model="v$.limitedParticipant.$model" input-id="limitedParticipant" />
+                            <InputSwitch v-model="travelGroup.limitedParticipant" input-id="limitedParticipant" />
                         </div>
-                        <div class="field field mb-4 col-12" v-show="v$.limitedParticipant.$model">
+                        <div class="field mb-4 col-12" v-show="travelGroup.limitedParticipant">
                             <div class="w-full">
-                                <label for="participantCount" class="font-medium text-900">참가자 제한 수</label>
-                                <InputNumber
-                                    v-model="v$.limitParticipantCount.$model"
-                                    :class="{ 'p-invalid': v$.limitParticipantCount.$invalid && submitted }"
-                                    input-id="participantCount"
-                                />
+                                <label for="participantCount" class="font-medium w-2 text-900">참가자 제한 수</label>
+                                <InputNumber v-model="travelGroup.limitParticipantCount" input-id="participantCount" />
                             </div>
-                            <span v-if="v$.limitParticipantCount.$error && submitted">
-                                <span
-                                    id="email-error"
-                                    v-for="(error, index) of v$.limitParticipantCount.$errors"
-                                    :key="index"
-                                >
-                                    <small class="p-error">{{ error.$message }}</small>
-                                </span>
-                            </span>
                         </div>
 
                         <div class="field mb-4 col-12 flex align-items-center">
-                            <label for="open" class="font-medium text-900 mr-5">공개 여부</label>
+                            <label for="open" class="font-medium w-2 text-900 mr-5">공개 여부</label>
                             <InputSwitch v-model="v$.open.$model" input-id="open" />
                         </div>
                         <div class="col-12 flex justify-content-center mt-5">
-                            <Button label="등록" type="submit" class="w-auto mt-3"></Button>
+                            <Button label="등록" type="submit" class="w-5 mt-3"></Button>
                         </div>
                     </div>
                 </form>
@@ -97,102 +120,96 @@
 </template>
 
 <script setup>
-import { onMounted, reactive, ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import ImagePreView from '@/components/common/ImagePreView.vue';
 import { getTravelRegisterInit, saveTravelGroup } from '@/api/travel';
 import { useVuelidate } from '@vuelidate/core';
 import { helpers, maxValue, minValue, required } from '@vuelidate/validators';
+import { useRouter } from 'vue-router';
+import { useModalStore } from '@/store/modal';
 
+const router = useRouter();
+const modalStore = useModalStore();
 onMounted(() => {
     getInit();
 });
+const travelThemes = ref([]);
+const limitAgeRange = ref([20, 30]);
+
 const getInit = async () => {
     const res = await getTravelRegisterInit();
     if (res.success) {
         travelThemes.value = res.response.travelThemes;
     }
 };
-const travelThemes = ref([]);
-
-const isShowModal = ref(false);
 
 const travelGroup = ref({
     groupName: '',
     travelThemes: [],
+    description: '',
+    imageUrl: '',
     startDate: new Date(),
-    limitParticipantCount: 1,
     limitedParticipant: false,
+    limitParticipantCount: 1,
+    limitedAge: false,
+    limitAgeRangeStart: 0,
+    limitAgeRangeEnd: 0,
     open: true,
 });
-const imageFile = ref(null);
 
 const rules = {
     groupName: { required: helpers.withMessage('그룹 명을 입력해 주세요.', required) },
+    description: { required: helpers.withMessage('내용을 입력 입력해 주세요.', required) },
     limitParticipantCount: {
         required: helpers.withMessage('참가제한 인원을 입력해 주세요.', required),
         minValue: helpers.withMessage('참가제한 인원을 최소 1명 이상 입력해 주세요.', minValue(1)),
         maxValue: helpers.withMessage('참가인원은 최대 100명까지만 가능합니다.', maxValue(100)),
     },
     travelThemes: { required: helpers.withMessage('테마를 한개 이상 선택해 주세요.', required) },
-    startDate: { required },
-    limitedParticipant: {},
     open: { required },
 };
 const v$ = useVuelidate(rules, travelGroup);
 const submitted = ref(false);
 
-const updatePic = (dataUrl, blob) => {
-    result.dataURL = dataUrl;
-    result.blobURL = blob;
-    isShowModal.value = false;
+const updatePic = dataUrl => {
+    travelGroup.value.imageUrl = dataUrl;
 };
 
-const uploadInput = ref(null);
-const pic = ref('');
-
-const result = reactive({
-    dataURL: '',
-    blobURL: '',
-});
 /**
  * Select the picture to be cropped
  */
-
-const selectFile = event => {
-    const file = event.target.files[0];
-    // Reset last selection and results
-    pic.value = '';
-    result.dataURL = '';
-    result.blobURL = '';
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onload = () => {
-        // Update the picture source of the `img` prop
-        pic.value = String(reader.result);
-        console.log(pic.value);
-        // Show the modal
-        isShowModal.value = true;
-        // Clear selected files of input element
-        if (!uploadInput.value) return;
-        uploadInput.value.value = '';
-    };
-};
-
-const cancelThumbnail = () => {
-    result.dataURL = '';
-    result.blobURL = '';
-    imageFile.value = null;
-    isShowModal.value = false;
-};
 
 const saveGroup = async isValid => {
     submitted.value = true;
     if (!isValid) {
         return;
     }
-    const res = await saveTravelGroup();
-    console.log(res);
+
+    if (travelGroup.value.limitedAge) {
+        travelGroup.value.limitAgeRangeStart = limitAgeRange.value[0];
+        travelGroup.value.limitAgeRangeEnd = limitAgeRange.value[1];
+    }
+
+    const themeList = [];
+    for (const theme of travelGroup.value.travelThemes) {
+        themeList.push(theme.code);
+    }
+    travelGroup.value.travelThemes = themeList;
+    const res = await saveTravelGroup(travelGroup.value);
+    if (res.success) {
+        alert('여행그룹이 성공적으로 생성되었습니다.');
+        await router.push('/');
+    }
 };
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.buttonColorGreen {
+    background-color: #03d069;
+}
+
+.buttonColorGreen:hover {
+    background-color: #03d069;
+    transition: 0.7s;
+}
+</style>
